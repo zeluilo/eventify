@@ -11,7 +11,7 @@ $eventTable = new DatabaseTable($pdo, 'events', 'eventId');
 
 $controllers = [];
 $controllers['users'] = new \Controllers\UsersController($userTable);
-$controllers['category'] = new \Controllers\CategoryController($categoryTable);
+$controllers['category'] = new \Controllers\CategoryController($categoryTable, $eventTable);
 $controllers['events'] = new \Controllers\EventController($eventTable);
 
 $route = ltrim(explode('?', $_SERVER['REQUEST_URI'])[0], '/');
@@ -26,5 +26,5 @@ $route = ltrim(explode('?', $_SERVER['REQUEST_URI'])[0], '/');
 
     $output = loadTemplate('../templates/' . $page['template'], $page['variables']);
     $title = $page['title'];
-    require '../templates/layout.html.php';
+    require './pages/layout.php';
 
