@@ -14,37 +14,37 @@ class UsersController
 
     public function home()
     {
-        $registrationSuccess = false;
-        $loggedinSuccess = false;
-        $loggedoutSuccess = false;
+        // $registrationSuccess = false;
+        // $loggedinSuccess = false;
+        // $loggedoutSuccess = false;
 
-        // Check if registration success session variable is set
-        if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess']) {
-            // Unset the session variable to avoid displaying the modal on subsequent requests
-            unset($_SESSION['registrationSuccess']);
-            $registrationSuccess = true;
-        }
+        // // Check if registration success session variable is set
+        // if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess']) {
+        //     // Unset the session variable to avoid displaying the modal on subsequent requests
+        //     unset($_SESSION['registrationSuccess']);
+        //     $registrationSuccess = true;
+        // }
 
-        // Check if login success session variable is set
-        if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']) {
-            // Unset the session variable to avoid displaying the modal on subsequent requests
-            unset($_SESSION['loggedin']);
-            $loggedinSuccess = true;
-        }
+        // // Check if login success session variable is set
+        // if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']) {
+        //     // Unset the session variable to avoid displaying the modal on subsequent requests
+        //     unset($_SESSION['loggedin']);
+        //     $loggedinSuccess = true;
+        // }
 
-        // Check if logout success session variable is set
-        if (isset($_SESSION['loggedout']) && $_SESSION['loggedout']) {
-            // Unset the session variable to avoid displaying the modal on subsequent requests
-            unset($_SESSION['loggedout']);
-            $loggedoutSuccess = true;
-        }
+        // // Check if logout success session variable is set
+        // if (isset($_SESSION['loggedout']) && $_SESSION['loggedout']) {
+        //     // Unset the session variable to avoid displaying the modal on subsequent requests
+        //     unset($_SESSION['loggedout']);
+        //     $loggedoutSuccess = true;
+        // }
 
         // $auctioncats = $this->lot_auctionTable->findAllDistinctAuctions();
 
         // $auction_cat_bids = $this->user_bid_categoryTable->findAll();
 
         return [
-            'template' => 'userhome.html.php',
+            'template' => 'home.php',
             'variables' => [
                 // 'auction_cat_bids' => $auction_cat_bids,
                 // 'registrationSuccess' => $registrationSuccess,
@@ -52,7 +52,7 @@ class UsersController
                 // 'loggedoutSuccess' => $loggedoutSuccess,
                 // 'auctioncats' => $auctioncats,
             ],
-            'title' => 'Eventify'
+            'title' => 'Eventify - Discover Events'
         ];
     }
     public function editUser(): array

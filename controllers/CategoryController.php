@@ -2,7 +2,7 @@
 
 namespace Controllers;
 
-session_start();
+// session_start();
 class CategoryController
 {
     private $categoryTable;

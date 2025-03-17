@@ -2,8 +2,10 @@
 
 require '../functions/loadTemplate.php';
 require '../database.php';
-require '../classes/DatabaseTable.php';
-require '../Controllers/AdminController.php';
+require '../clasess/DatabaseTable.php';
+require '../controllers/UsersController.php';
+require '../controllers/EventController.php';
+require '../controllers/CategoryController.php';
 
 $userTable = new DatabaseTable($pdo, 'users', 'userId');
 $categoryTable = new DatabaseTable($pdo, 'category', 'categoryId');
@@ -17,14 +19,14 @@ $controllers['events'] = new \Controllers\EventController($eventTable);
 $route = ltrim(explode('?', $_SERVER['REQUEST_URI'])[0], '/');
 
     if ($route == '') {
-        $page = $controllers['admin']->home();
+        $page = $controllers['users']->home();
     } else {
         list($controllerName, $functionName) = explode('/', $route);
         $controller = $controllers[$controllerName];
         $page = $controller->$functionName();
     }
 
-    $output = loadTemplate('../templates/' . $page['template'], $page['variables']);
+    $output = loadTemplate('../pages/' . $page['template'], $page['variables']);
     $title = $page['title'];
-    require './pages/layout.php';
+    require '../pages/layout.php';
 
