@@ -23,7 +23,7 @@
 
     <div class="about-row">
       <div class="about-image">
-        <img src="assets/images/eventify.png" alt="About Eventify Image">
+        <img src="/assets/images/eventify.png" alt="About Eventify Image">
       </div>
       <div class="about-text">
         <h3>Streamlined Event Management Platform</h3>

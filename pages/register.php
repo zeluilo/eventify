@@ -4,7 +4,7 @@
     <div class="home-content">
         <h2>Register</h2>
         <p>Register an Account.</p>
-        <a href="#events" class="btn-get-started">Search</a>
+        <a href="#events" class="btn-get-started">Browse Events</a>
     </div>
 </section>
 
@@ -41,6 +41,8 @@
             <div class="form-group submit-group">
                 <button type="submit">Register</button>
             </div>
+            <p class="form-link">Already have an account? <a href="/users/login">Login here</a></p>
+
         </form>
     </div>
 </section>

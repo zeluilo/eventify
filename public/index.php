@@ -19,7 +19,7 @@ $controllers['events'] = new \Controllers\EventController($eventTable);
 $route = ltrim(explode('?', $_SERVER['REQUEST_URI'])[0], '/');
 
     if ($route == '') {
-        $page = $controllers['users']->register();
+        $page = $controllers['users']->login();
     } else {
         list($controllerName, $functionName) = explode('/', $route);
         $controller = $controllers[$controllerName];

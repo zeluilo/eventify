@@ -570,7 +570,7 @@ section,
   width: 100%;
   height: auto;
   border-radius: 100px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .about-text {
@@ -692,43 +692,85 @@ section,
   padding-bottom: 40px;
 }
 
-.form-wrapper {
+.form-container {
   max-width: 500px;
-  margin: 0 auto;
-  padding: 30px;
-  background-color: #f5f5f5;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 50px auto;
+  padding: 30px 40px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.php-email-form label {
-  display: block;
-  margin-top: 15px;
+.form-title {
+  text-align: center;
+  font-size: 24px;
+  color: #3c7840;
+  margin-bottom: 25px;
   font-weight: bold;
-  font-size: 14px;
 }
 
-.php-email-form input[type="text"],
-.php-email-form input[type="email"],
-.php-email-form input[type="password"] {
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-group input {
   width: 100%;
-  padding: 10px 15px;
+  padding: 12px 15px;
   font-size: 14px;
-  margin-top: 5px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
 }
 
-.php-email-form button[type="submit"] {
-  margin-top: 20px;
-  background-color: #3c7840;
-  color: #fff;
-  padding: 10px 25px;
-  border: none;
-  border-radius: 4px;
+.form-group input:focus {
+  outline: none;
+  border-color: #3c7840;
+  box-shadow: 0 0 4px rgba(60, 120, 64, 0.4);
+}
+
+.submit-group {
+  text-align: center;
+}
+
+.submit-group button {
+  background-color: white;
+  color: #3c7840;
+  padding: 12px 25px;
+  font-size: 16px;
+  border-radius: 6px;
+  border-color: #3c7840;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.php-email-form button[type="submit"]:hover {
-  background-color: #336333;
+.submit-group button:hover {
+  background-color: #336733;
+  color: white;
 }
+
+.form-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.form-link a {
+  color: #3c7840;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.form-link a:hover {
+  text-decoration: underline;
+  /* color: #044b09; */
+}
+

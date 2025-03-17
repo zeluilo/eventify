@@ -195,7 +195,7 @@ class UsersController
             }
         }
         return [
-            'template' => 'login.html.php',
+            'template' => 'login.php',
             'title' => 'Login',
             'variables' => ['show_message' => $show_message]
         ];
