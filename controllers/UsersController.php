@@ -207,7 +207,6 @@ class UsersController
         }
     }
 
-
     public function startSession()
     {
         if (!isset($_SESSION)) {

@@ -110,9 +110,9 @@ h6 {
   color: var(--default-color);
   background-color: var(--background-color);
   display: flex;
-  justify-content: space-between; 
-  align-items: center;           
-  padding: 15px 30px;           
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
   background-color: var(--background-color);
   color: var(--default-color);
   transition: all 0.5s;
@@ -358,7 +358,7 @@ h6 {
     }
   }
 
-/*--------------------------------------------------------------
+  /*--------------------------------------------------------------
 # Footer
 --------------------------------------------------------------*/
 
@@ -386,20 +386,6 @@ h6 {
 
   .footer .address p {
     margin-bottom: 0px;
-  }
-
-  .footer .social-links a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1px solid color-mix(in srgb, var(--default-color), transparent 50%);
-    font-size: 16px;
-    color: color-mix(in srgb, var(--default-color), transparent 50%);
-    margin-right: 10px;
-    transition: 0.3s;
   }
 
   .footer .social-links a:hover {
@@ -434,7 +420,7 @@ section,
 
 @media (max-width: 1199px) {
   section,
-.section {
+  .section {
     scroll-margin-top: 66px;
   }
 }
@@ -455,7 +441,7 @@ section,
   margin-bottom: 0;
 }
 
-.hero {
+.home {
   width: 100%;
   min-height: 70vh;
   position: relative;
@@ -465,7 +451,7 @@ section,
   justify-content: center;
 }
 
-.hero img {
+.home img {
   position: absolute;
   inset: 0;
   display: block;
@@ -475,20 +461,20 @@ section,
   z-index: 1;
 }
 
-.hero:before {
-  content: '';
+.home:before {
+  content: "";
   background: color-mix(in srgb, var(--background-color), transparent 30%);
   position: absolute;
   inset: 0;
   z-index: 2;
 }
 
-.hero .container {
+.home .container {
   position: relative;
   z-index: 3;
 }
 
-.hero-content {
+.home-content {
   position: relative;
   z-index: 3;
   text-align: center;
@@ -497,20 +483,19 @@ section,
   padding: 0 20px;
 }
 
-
-.hero h2 {
+.home h2 {
   margin: 0;
   font-size: 48px;
   font-weight: 700;
 }
 
-.hero p {
+.home p {
   margin: 10px 0 0 0;
   font-size: 24px;
   color: var(--heading-color);
 }
 
-.hero .btn-get-started {
+.home .btn-get-started {
   color: var(--default-color);
   font-weight: 400;
   font-size: 16px;
@@ -523,17 +508,227 @@ section,
   border: 2px solid color-mix(in srgb, var(--default-color), transparent 50%);
 }
 
-.hero .btn-get-started:hover {
+.home .btn-get-started:hover {
   color: var(--contrast-color);
   background: var(--accent-color);
   border-color: var(--accent-color);
 }
 
 @media (max-width: 768px) {
-  .hero h2 {
+  .home h2 {
     font-size: 32px;
   }
-  .hero p {
+  .home p {
     font-size: 18px;
   }
+}
+
+/* Section Styling */
+.about-section {
+  padding: 60px 20px;
+  color: #333;
+  font-family: Arial, sans-serif;
+  border-bottom: thick solid #3c7840;
+}
+
+.about-title-container {
+  max-width: 900px;
+  margin: 0 auto 40px auto;
+  text-align: center;
+}
+
+.about-title-container h2 {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+}
+
+.about-title-container p {
+  font-size: 1rem;
+  color: #666;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.about-content-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.about-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  align-items: center;
+}
+
+.about-image {
+  flex: 1 1 15%;
+  text-align: center;
+}
+
+.about-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 100px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.about-text {
+  flex: 1 1 50%;
+}
+
+.about-text h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.about-text .highlighted-text {
+  font-style: italic;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+.about-text ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.about-text ul li {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #555;
+}
+
+.about-text ul .icon {
+  color: #2a9d8f;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+  .about-row {
+    flex-direction: column;
+  }
+  .about-image,
+  .about-text {
+    flex: 1 1 100%;
+  }
+}
+
+.events .event-item {
+  background-color: var(--surface-color);
+  box-shadow: 0px 5px 90px rgba(0, 0, 0, 0.1);
+  padding: 40px 20px;
+  text-align: center;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.events .event-item h3 {
+  padding: 15px;
+  margin-top: 15px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.events .event-item .event-date {
+  font-size: 16px;
+  color: var(--accent-color);
+  margin-bottom: 10px;
+}
+
+.events .event-item ul {
+  padding: 15px 0;
+  list-style: none;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.events .event-item .btn-wrap {
+  padding: 15px;
+  text-align: center;
+}
+
+.events .event-item .btn-view {
+  color: var(--accent-color);
+  background-color: transparent;
+  border: 2px solid var(--accent-color);
+  display: inline-block;
+  padding: 10px 40px 12px 40px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-family: var(--heading-font);
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.events .event-item .btn-view:hover {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+}
+
+.events-cards-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  padding: 0 20px;
+}
+
+.event-card {
+  flex: 1 1 300px;
+  max-width: 350px;
+}
+
+.section-title-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  padding-bottom: 40px;
+}
+
+.form-wrapper {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.php-email-form label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.php-email-form input[type="text"],
+.php-email-form input[type="email"],
+.php-email-form input[type="password"] {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 14px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.php-email-form button[type="submit"] {
+  margin-top: 20px;
+  background-color: #3c7840;
+  color: #fff;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.php-email-form button[type="submit"]:hover {
+  background-color: #336333;
 }
