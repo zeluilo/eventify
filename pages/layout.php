@@ -25,12 +25,11 @@
 </head>
 
 <body>
-    <div>
+    <?php require '../includes/header.php'; ?>
         <div id="main">
             <?= $output ?>
         </div>
-        <?php require '../includes/footer.php'; ?>
-    </div>
+    <?php require '../includes/footer.php'; ?>
 
     <!-- JavaScript-->
     <script src="assets/js/script.js"></script>

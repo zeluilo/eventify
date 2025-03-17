@@ -1,3 +1,11 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  scroll-behavior: smooth;
+}
+
 /*--------------------------------------------------------------
 # Font & Colours Variables
 --------------------------------------------------------------*/
@@ -101,13 +109,21 @@ h6 {
   --heading-color: #ffffff;
   color: var(--default-color);
   background-color: var(--background-color);
-  padding: 15px 0;
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;           
+  padding: 15px 30px;           
+  background-color: var(--background-color);
+  color: var(--default-color);
   transition: all 0.5s;
   z-index: 997;
 }
 
 .header .logo {
   line-height: 1;
+  display: flex;
+  align-items: center;
+  margin-right: auto;
 }
 
 .header .logo img {
@@ -117,7 +133,7 @@ h6 {
 
 .header .logo h1 {
   font-size: 30px;
-  margin: 0;
+  margin: 0 0 0 20px;
   font-weight: 700;
   color: var(--heading-color);
 }
@@ -342,7 +358,7 @@ h6 {
     }
   }
 
-  /*--------------------------------------------------------------
+/*--------------------------------------------------------------
 # Footer
 --------------------------------------------------------------*/
 
@@ -350,8 +366,9 @@ h6 {
     color: var(--default-color);
     background-color: var(--background-color);
     font-size: 14px;
-    padding: 40px 0 0 0;
+    padding: 20px 0 0 0;
     position: relative;
+    text-align: center;
   }
 
   .footer .icon {
