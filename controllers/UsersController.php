@@ -14,30 +14,30 @@ class UsersController
 
     public function home()
     {
-        // $registrationSuccess = false;
-        // $loggedinSuccess = false;
-        // $loggedoutSuccess = false;
+        $registrationSuccess = false;
+        $loggedinSuccess = false;
+        $loggedoutSuccess = false;
 
         // // Check if registration success session variable is set
-        // if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess']) {
-        //     // Unset the session variable to avoid displaying the modal on subsequent requests
-        //     unset($_SESSION['registrationSuccess']);
-        //     $registrationSuccess = true;
-        // }
+        if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess']) {
+            // Unset the session variable to avoid displaying the modal on subsequent requests
+            unset($_SESSION['registrationSuccess']);
+            $registrationSuccess = true;
+        }
 
-        // // Check if login success session variable is set
-        // if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']) {
-        //     // Unset the session variable to avoid displaying the modal on subsequent requests
-        //     unset($_SESSION['loggedin']);
-        //     $loggedinSuccess = true;
-        // }
+        // Check if login success session variable is set
+        if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']) {
+            // Unset the session variable to avoid displaying the modal on subsequent requests
+            unset($_SESSION['loggedin']);
+            $loggedinSuccess = true;
+        }
 
-        // // Check if logout success session variable is set
-        // if (isset($_SESSION['loggedout']) && $_SESSION['loggedout']) {
-        //     // Unset the session variable to avoid displaying the modal on subsequent requests
-        //     unset($_SESSION['loggedout']);
-        //     $loggedoutSuccess = true;
-        // }
+        // Check if logout success session variable is set
+        if (isset($_SESSION['loggedout']) && $_SESSION['loggedout']) {
+            // Unset the session variable to avoid displaying the modal on subsequent requests
+            unset($_SESSION['loggedout']);
+            $loggedoutSuccess = true;
+        }
 
         // $auctioncats = $this->lot_auctionTable->findAllDistinctAuctions();
 
@@ -47,9 +47,9 @@ class UsersController
             'template' => 'home.php',
             'variables' => [
                 // 'auction_cat_bids' => $auction_cat_bids,
-                // 'registrationSuccess' => $registrationSuccess,
-                // 'loggedinSuccess' => $loggedinSuccess,
-                // 'loggedoutSuccess' => $loggedoutSuccess,
+                'registrationSuccess' => $registrationSuccess,
+                'loggedinSuccess' => $loggedinSuccess,
+                'loggedoutSuccess' => $loggedoutSuccess,
                 // 'auctioncats' => $auctioncats,
             ],
             'title' => 'Eventify - Discover Events'
@@ -107,7 +107,7 @@ class UsersController
                 'users' => $users,
                 'userResults' => $userResults,
             ],
-            'title' => 'Eventify',
+            'title' => 'Eventify - Discover Events',
         ];
     }
 
@@ -121,6 +121,7 @@ class UsersController
             $existingEmail = $this->userTable->find('email', $email);
             if (!empty($existingEmail)) {
                 $error = 'Account exists already';
+                $_SESSION['errorMessage'] = $error;
                 return [
                     'template' => 'register.php',
                     'variables' => ['error' => $error],
@@ -133,6 +134,7 @@ class UsersController
 
             if (strlen($password) < 8 || !preg_match('/\d/', $password)) {
                 $error = 'Password must be at least 8 characters long and contain at least one number';
+                $_SESSION['errorMessage'] = $error;
                 return [
                     'template' => 'register.php',
                     'variables' => ['error' => $error],
@@ -142,6 +144,7 @@ class UsersController
 
             if ($password !== $repeatPassword) {
                 $error = 'Passwords don\'t match';
+                $_SESSION['errorMessage'] = $error;
                 return [
                     'template' => 'register.php',
                     'variables' => ['error' => $error],
@@ -161,18 +164,17 @@ class UsersController
                 'datecreated' => date('Y-m-d H:i'),
             ];
 
+            $this->userTable->insert($values);
             $_SESSION['registrationSuccess'] = true;
 
-
-            $this->userTable->insert($values);
-            header("Location: /login");
+            header("Location: /users/register");
             exit();
         }
 
         return [
             'template' => 'register.php',
             'variables' => ['error' => $error],
-            'title' => 'Register on Eventify!',
+            'title' => 'Register - Eventify',
         ];
     }
     public function login(): array
@@ -185,7 +187,7 @@ class UsersController
                 if ($verify_pw) {
                     $_SESSION['loggedin'] = $email[0]['userId'];
                     $_SESSION['userDetails'] = $email[0];
-                    header("Location: /home");
+                    header("Location: /users/home");
                     exit();
                 } else {
                     $show_message = 'Incorrect login details. Please try again!';
@@ -196,7 +198,7 @@ class UsersController
         }
         return [
             'template' => 'login.php',
-            'title' => 'Login',
+            'title' => 'Login - Eventify',
             'variables' => ['show_message' => $show_message]
         ];
     }
@@ -218,7 +220,7 @@ class UsersController
     {
         $this->startSession();
 
-        if (!isset($_SESSION['userDetails']['checkAdmin'])) {
+        if (!isset($_SESSION['userDetails']['user_role'])) {
             $this->redirectToLogin();
         }
     }

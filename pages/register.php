@@ -1,3 +1,25 @@
+<?php
+if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess'] === true) {
+
+    unset($_SESSION['registrationSuccess']);
+    echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+          <script>
+            Swal.fire({
+                title: 'Registration Successful!',
+                text: 'You can now log in with your credentials.',
+                icon: 'success',
+                confirmButtonText: 'Go to Login'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/users/login'; // Redirect to login page
+                }
+            });
+          </script>";
+}
+
+include '../includes/error-message.php';
+?>
+
 <section id="home" class="home section dark-background">
     <!-- <img src="assets/img/hero-bg.jpg" alt="Hero Background"> -->
 
@@ -10,7 +32,7 @@
 
 <section id="about" class="about-section">
     <div class="form-container">
-        <form action="forms/register.php" method="post" class="php-email-form">
+        <form action="/users/register" method="post" class="php-email-form">
             <h2 class="form-title">Create an Account</h2>
 
             <div class="form-group">
@@ -34,12 +56,17 @@
             </div>
 
             <div class="form-group">
+                <label for="password">Repeat Password</label>
+                <input type="password" id="repeat_password" name="repeat_password" required>
+            </div>
+
+            <div class="form-group">
                 <label for="phone">Phone Number</label>
                 <input type="text" id="phone" name="phone" required>
             </div>
 
             <div class="form-group submit-group">
-                <button type="submit">Register</button>
+                <button type="submit" name="submit">Register</button>
             </div>
             <p class="form-link">Already have an account? <a href="/users/login">Login here</a></p>
 
