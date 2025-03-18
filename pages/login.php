@@ -11,7 +11,7 @@
 </section>
 
 <div class="form-container">
-  <form action="forms/login.php" method="post" class="php-email-form">
+  <form action="/users/login" method="post" class="php-email-form">
     <h2 class="form-title">Login</h2>
 
     <div class="form-group">
@@ -25,7 +25,7 @@
     </div>
 
     <div class="form-group submit-group">
-      <button type="submit">Login</button>
+      <button type="submit" name="submit">Login</button>
     </div>
 
     <p class="form-link">Don’t have an account? <a href="/users/register">Register here</a></p>

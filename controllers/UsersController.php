@@ -125,7 +125,7 @@ class UsersController
                 return [
                     'template' => 'register.php',
                     'variables' => ['error' => $error],
-                    'title' => 'Create Account'
+                    'title' => 'Register - Eventify'
                 ];
             }
 
@@ -138,7 +138,7 @@ class UsersController
                 return [
                     'template' => 'register.php',
                     'variables' => ['error' => $error],
-                    'title' => 'Create Account',
+                    'title' => 'Register - Eventify',
                 ];
             }
 
@@ -148,7 +148,7 @@ class UsersController
                 return [
                     'template' => 'register.php',
                     'variables' => ['error' => $error],
-                    'title' => 'Create Account',
+                    'title' => 'Register - Eventify',
                 ];
             }
 
@@ -182,6 +182,8 @@ class UsersController
         $show_message = '';
         if (isset($_POST['submit'])) {
             $email = $this->userTable->find('email', $_POST['email']);
+            // echo "<script>console.log('User Details: ', " . json_encode($email) . ");</script>";
+
             if ($email) {
                 $verify_pw = password_verify($_POST['password'], $email[0]['password']);
                 if ($verify_pw) {
@@ -191,9 +193,12 @@ class UsersController
                     exit();
                 } else {
                     $show_message = 'Incorrect login details. Please try again!';
+                    $_SESSION['errorMessage'] = $show_message;
+
                 }
             } else {
                 $show_message = 'Incorrect login details. Please try again!';
+                $_SESSION['errorMessage'] = $show_message;
             }
         }
         return [
