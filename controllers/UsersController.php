@@ -25,12 +25,12 @@ class UsersController
             $registrationSuccess = true;
         }
 
-        // Check if login success session variable is set
-        if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']) {
-            // Unset the session variable to avoid displaying the modal on subsequent requests
-            unset($_SESSION['loggedin']);
-            $loggedinSuccess = true;
-        }
+        // // Check if login success session variable is set
+        // if (isset($_SESSION['loginSuccess']) && $_SESSION['loginSuccess']) {
+        //     // Unset the session variable to avoid displaying the modal on subsequent requests
+        //     unset($_SESSION['loginSuccess']);
+        //     $loggedinSuccess = true;
+        // }
 
         // Check if logout success session variable is set
         if (isset($_SESSION['loggedout']) && $_SESSION['loggedout']) {
@@ -187,6 +187,7 @@ class UsersController
             if ($email) {
                 $verify_pw = password_verify($_POST['password'], $email[0]['password']);
                 if ($verify_pw) {
+                    $_SESSION['loginSuccess'] = true;
                     $_SESSION['loggedin'] = $email[0]['userId'];
                     $_SESSION['userDetails'] = $email[0];
                     header("Location: /users/home");
@@ -196,6 +197,7 @@ class UsersController
                     $_SESSION['errorMessage'] = $show_message;
 
                 }
+                $_SESSION['loginSuccess'] = true;
             } else {
                 $show_message = 'Incorrect login details. Please try again!';
                 $_SESSION['errorMessage'] = $show_message;
@@ -245,7 +247,7 @@ class UsersController
 
     private function redirectToLogin()
     {
-        header("Location: /login");
+        header("Location: /users/login");
         exit();
     }
 }

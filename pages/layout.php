@@ -32,7 +32,8 @@
     <?php require '../includes/footer.php'; ?>
 
     <!-- JavaScript-->
-    <script src="/assets/js/script.js"></script>
+    <script src="/assets/javascripts/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>

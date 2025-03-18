@@ -1,6 +1,6 @@
 <header id="header" class="header">
 
-        <a href="index.html" class="logo d-flex align-items-center">
+        <a href="/users/home" class="logo">
             <!-- <img src="../assets/images/favicon.png" alt=""> -->
             <h1 class="sitename">Eventify</h1>
         </a>

@@ -10,7 +10,7 @@ $isUser = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === '
 
 <nav id="navmenu" class="navmenu">
     <ul>
-        <li><a href="#hero" class="active">Home</a></li>
+        <li><a href="/users/home" class="active">Home</a></li>
         <li><a href="/users/home/#about">About</a></li>
         <li class="dropdown">
             <a href="#" class="dropdown-toggle"><span>Events</span> <i class="toggle-dropdown"></i></a>
@@ -57,13 +57,11 @@ $isUser = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === '
                     </li>
                     <div class="dropdown-divider"></div>
                     <li>
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                            Logout
-                        </a>
+                        <a class="dropdown-item" href="#" onclick="confirmLogout(event)">Logout</a>
                     </li>
                 </ul>
             <?php else : ?>
-        <li><a href="/users/register">Sign In</a></li>
+        <li><a href="/users/login">Sign In</a></li>
     <?php endif; ?>
     </li>
 

@@ -1,3 +1,19 @@
+<?php
+if (isset($_SESSION['loginSuccess']) && $_SESSION['loginSuccess'] === true) {
+    unset($_SESSION['loginSuccess']);
+    echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+          <script>
+            Swal.fire({
+                title: 'Welcome to Eventify!',
+                text: 'You have successfully logged in. Explore upcoming events now!',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+          </script>";
+}
+?>
+
 <section id="home" class="home section dark-background">
 
     <!-- <img src="assets/img/hero-bg.jpg" alt="Hero Background"> -->
