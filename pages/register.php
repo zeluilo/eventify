@@ -2,7 +2,7 @@
 if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess'] === true) {
 
     unset($_SESSION['registrationSuccess']);
-    echo "
+    echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
           <script>
             Swal.fire({
                 title: 'Registration Successful!',

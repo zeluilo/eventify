@@ -14,7 +14,7 @@ $eventTable = new DatabaseTable($pdo, 'events', 'eventId');
 $controllers = [];
 $controllers['users'] = new \Controllers\UsersController($userTable);
 $controllers['category'] = new \Controllers\CategoryController($categoryTable, $eventTable);
-$controllers['events'] = new \Controllers\EventController($eventTable);
+$controllers['events'] = new \Controllers\EventController($categoryTable, $eventTable);
 
 $route = ltrim(explode('?', $_SERVER['REQUEST_URI'])[0], '/');
 

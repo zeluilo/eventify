@@ -1,7 +1,7 @@
 <?php
 if (isset($_SESSION['categoryCreationSuccess']) && $_SESSION['categoryCreationSuccess'] === true) {
     unset($_SESSION['categoryCreationSuccess']);
-    echo "
+    echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
       <script>
         Swal.fire({
             title: 'Category Created Successfully!',
@@ -25,18 +25,19 @@ include '../includes/error-message.php';
 
 <section id="about" class="about-section">
     <div class="form-container">
-        <form action="/categories/create" method="post" class="php-email-form">
+        <form action="/category/create" method="post" class="php-email-form">
             <h2 class="form-title">Add New Category</h2>
 
             <div class="form-group">
                 <label for="category_name">Category Name</label>
-                <input type="text" id="category_name" name="category_name" required>
+                <input type="text" id="category_name" placeholder="Enter Event Category" name="category_name" required>
             </div>
 
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label for="category_description">Category Description</label>
-                <textarea id="category_description" name="category_description" rows="4" required></textarea>
-            </div>
+                <textarea class="form-control active" name="category_description" rows="4"></textarea>
+            </div> -->
+
 
             <div class="form-group submit-group">
                 <button type="submit" name="submit">Add Category</button>

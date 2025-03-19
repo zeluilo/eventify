@@ -2,7 +2,6 @@
 
 namespace Controllers;
 
-// session_start();
 class CategoryController
 {
     private $categoryTable;
@@ -26,31 +25,44 @@ class CategoryController
 
     public function create(): array
     {
-        $category = $this->categoryTable->findAll();
         $message = '';
 
         if (isset($_POST['submit'])) {
+            $category_name = $_POST['category_name'];
+
+            $category_exist = $this->categoryTable->find('category_name', $category_name);
+            if (!empty($category_exist)) {
+                $message = 'Category exists already';
+                $_SESSION['errorMessage'] = $message;
+                return [
+                    'template' => 'category.php',
+                    'variables' => [
+                        'message' => $message,
+                    ],
+                    'title' => 'Add Category - Eventify',
+                ];
+            }
+
             $values = [
                 'category_name' => $_POST['category_name'],
-                'category_description' => $_POST['category_description'],
                 'datecreate' => date('Y-m-d H:i')
             ];
             $inserted = $this->categoryTable->insert($values);
 
             if ($inserted) {
                 $message = 'Failed to add category. Please try again.';
+                $_SESSION['errorMessage'] = $message;
             } else {
-                $message = 'Category added successfully!';
+                $_SESSION['categoryCreationSuccess'] = true;
             }
         }
 
         return [
             'template' => 'category.php',
             'variables' => [
-                'category' => $category,
                 'message' => $message,
             ],
-            'title' => 'Add Category',
+            'title' => 'Add Category - Eventify',
         ];
     }
 

@@ -15,9 +15,9 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
         <li><a href="/users/home/#about">About</a></li>
         <li><a href="/category/create">Category</a></li>
         <li class="dropdown">
-            <a href="/events/createEvent" class="dropdown-toggle"><span>Events</span> <i class="toggle-dropdown"></i></a>
+            <a href="/events/create" class="dropdown-toggle"><span>Events</span> <i class="toggle-dropdown"></i></a>
             <ul class="dropdown-menu">
-                <li><a href="/events/createEvent">Create an Event</a></li>
+                <li><a href="/events/create">Create an Event</a></li>
                 <li><a href="#">View Available Events</a></li>
             </ul>
         </li>

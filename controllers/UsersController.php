@@ -1,8 +1,6 @@
 <?php
 
 namespace Controllers;
-
-session_start();
 class UsersController
 {
     private $userTable;
