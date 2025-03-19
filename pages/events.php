@@ -13,7 +13,6 @@ if (isset($_SESSION['eventCreationSuccess']) && $_SESSION['eventCreationSuccess'
       </script>";
 }
 
-// Include error messages
 include '../includes/error-message.php';
 ?>
 
@@ -54,9 +53,9 @@ include '../includes/error-message.php';
                 <label for="categoryId">Category</label>
                 <select id="categoryId" name="categoryId" required>
                     <?php
-                        foreach ($category as $row) {
-                            echo '<option value="' . $row['categoryId'] . '"' . (isset($event) && $event['categoryId'] == $row['categoryId'] ? ' selected' : '') . '>' . $row['category_name'] . '</option>';
-                        }
+                    foreach ($category as $row) {
+                        echo '<option value="' . $row['categoryId'] . '"' . (isset($event) && $event['categoryId'] == $row['categoryId'] ? ' selected' : '') . '>' . $row['category_name'] . '</option>';
+                    }
                     ?>
                 </select>
             </div>
@@ -75,4 +74,38 @@ include '../includes/error-message.php';
 
         </form>
     </div>
+</section>
+
+<section id="event-management" class="event-management-section">
+    <h2>Manage Events</h2>
+    <table class="events-table">
+        <thead>
+            <tr>
+                <th>Event Title</th>
+                <th>Description</th>
+                <th>Date & Time</th>
+                <th>Location</th>
+                <th>Category</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            foreach ($events as $event) {
+                echo '<tr>';
+                echo '<td>' . htmlspecialchars($event['title']) . '</td>';
+                echo '<td>' . htmlspecialchars($event['description']) . '</td>';
+                echo '<td>' . date('Y-m-d H:i', strtotime($event['event_date'])) . '</td>';
+                echo '<td>' . htmlspecialchars($event['location']) . '</td>';
+                echo '<td>' . htmlspecialchars($event['category_name']) . '</td>';
+                echo '<td>';
+                echo '<a href="/events/view/' . $event['eventId'] . '" class="btn-view">View</a>';
+                echo '<a href="/events/edit/' . $event['eventId'] . '" class="btn-edit">Edit</a>';
+                echo '<a href="/events/delete/' . $event['eventId'] . '" class="btn-delete" onclick="return confirm(\'Are you sure you want to delete this event?\')">Delete</a>';
+                echo '</td>';
+                echo '</tr>';
+            }
+            ?>
+        </tbody>
+    </table>
 </section>
