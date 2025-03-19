@@ -5,6 +5,7 @@ $isLoggedInOrRegistered = isset($_SESSION['userDetails']);
 
 // Check if the logged-in user's checkAdmin is "USER"
 $isUser = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 'USER';
+$isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 'ADMIN';
 
 ?>
 
@@ -12,10 +13,11 @@ $isUser = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === '
     <ul>
         <li><a href="/users/home" class="active">Home</a></li>
         <li><a href="/users/home/#about">About</a></li>
+        <li><a href="/category/create">Category</a></li>
         <li class="dropdown">
-            <a href="#" class="dropdown-toggle"><span>Events</span> <i class="toggle-dropdown"></i></a>
+            <a href="/events/createEvent" class="dropdown-toggle"><span>Events</span> <i class="toggle-dropdown"></i></a>
             <ul class="dropdown-menu">
-                <li><a href="#">Create an Event</a></li>
+                <li><a href="/events/createEvent">Create an Event</a></li>
                 <li><a href="#">View Available Events</a></li>
             </ul>
         </li>
@@ -41,7 +43,6 @@ $isUser = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === '
                 <a class="dropdown-toggle" href="#">
                     <img class="user-avatar" src="../assets/images/profile.png" alt="User Avatar">
                 </a>
-
                 <ul class="user-dropdown-menu">
                     <li>
                         <h5 class="user-name"><?= htmlspecialchars($userDetails['first_name'] . ' ' . $userDetails['last_name']) ?></h5>
@@ -49,22 +50,25 @@ $isUser = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === '
 
                     </li>
                     <div class="dropdown-divider"></div>
-
                     <li>
                         <a class="dropdown-item" href="/admin/edituser?userId=<?php echo $userDetails['userId'] ?>">
                             Profile
                         </a>
                     </li>
+                    <?php if ($isAdmin) : ?>
+                        <div class="dropdown-divider"></div>
+                        <li>
+                            <a class="dropdown-item" href="/admin/dashboard">Dashboard</a>
+                        </li>
+                    <?php endif; ?>
                     <div class="dropdown-divider"></div>
                     <li>
                         <a class="dropdown-item" href="#" onclick="confirmLogout(event)">Logout</a>
                     </li>
                 </ul>
-            <?php else : ?>
+        </li>
+    <?php else : ?>
         <li><a href="/users/login">Sign In</a></li>
     <?php endif; ?>
-    </li>
-
     </ul>
-
 </nav>

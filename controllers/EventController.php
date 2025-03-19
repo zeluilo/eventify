@@ -11,10 +11,10 @@ class EventController
         $this->eventTable = $eventTable;
     }
     
-    public function home(): array
+    public function createEvent (): array
     {
         return [
-            'template' => 'home.html.php',
+            'template' => 'events.php',
             'variables' => [''],
             'title' => 'Record Management System'
         ];

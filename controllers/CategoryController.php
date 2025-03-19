@@ -24,7 +24,7 @@ class CategoryController
         ];
     }
 
-    public function addCategory(): array
+    public function create(): array
     {
         $category = $this->categoryTable->findAll();
         $message = '';
@@ -45,7 +45,7 @@ class CategoryController
         }
 
         return [
-            'template' => 'addcategory.php',
+            'template' => 'category.php',
             'variables' => [
                 'category' => $category,
                 'message' => $message,
@@ -54,7 +54,7 @@ class CategoryController
         ];
     }
 
-    public function editCategory(): array
+    public function update(): array
     {
         $this->checkLogin();
         $categoryId = isset($_GET['categoryId']) ? $_GET['categoryId'] : null;
@@ -95,7 +95,7 @@ class CategoryController
     }
 
 
-    public function manageCategory(): array
+    public function manage(): array
     {
         $this->checkLogin();
         $categories = $this->categoryTable->findAll();
@@ -109,7 +109,7 @@ class CategoryController
         ];
     }
 
-    public function deleteCategory(): array
+    public function delete(): array
     {
         $this->checkLogin();
         if (isset($_GET['categoryId'])) {
