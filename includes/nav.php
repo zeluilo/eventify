@@ -12,7 +12,7 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
 <nav id="navmenu" class="navmenu">
     <ul>
         <li><a href="/users/home" class="active">Home</a></li>
-        <li><a href="/users/home/#about">About</a></li>
+        <li><a href="/users/home#about">About</a></li>
         <li><a href="/category/create">Category</a></li>
         <li class="dropdown">
             <a href="/events/view" class="dropdown-toggle"><span>Events</span> <i class="toggle-dropdown"></i></a>

@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('searchInput');
     const categoryLinks = document.querySelectorAll('.category-link');
     const eventCardsContainer = document.getElementById('eventCards');
+    const clearFilterButton = document.getElementById('clearFilter');
     let currentCategory = '';
 
     console.log("DOM fully loaded. Script running...");
@@ -72,6 +73,14 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log(`Category selected: "${currentCategory}" | Search Term: "${searchTerm}"`);
             fetchFilteredEvents(searchTerm, currentCategory);
         });
+    });
+
+    //Handle Clear Filter button click
+    clearFilterButton.addEventListener('click', function (e) {
+        e.preventDefault();
+        currentCategory = '';
+        searchInput.value = '';
+        fetchFilteredEvents('', currentCategory);
     });
 
     // AJAX request function

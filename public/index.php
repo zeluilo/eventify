@@ -10,11 +10,12 @@ require '../controllers/CategoryController.php';
 $userTable = new DatabaseTable($pdo, 'users', 'userId');
 $categoryTable = new DatabaseTable($pdo, 'category', 'categoryId');
 $eventTable = new DatabaseTable($pdo, 'events', 'eventId');
+$viewEventDetails = new DatabaseTable($pdo, 'view_event_details', 'eventId');
 
 $controllers = [];
 $controllers['users'] = new \Controllers\UsersController($userTable);
 $controllers['category'] = new \Controllers\CategoryController($categoryTable, $eventTable);
-$controllers['events'] = new \Controllers\EventController($categoryTable, $eventTable);
+$controllers['events'] = new \Controllers\EventController($categoryTable, $eventTable, $viewEventDetails);
 
 $route = ltrim(explode('?', $_SERVER['REQUEST_URI'])[0], '/');
 

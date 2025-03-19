@@ -12,6 +12,7 @@
     <div class="events-container">
         <div class="categories">
             <h4>Filter by Categories</h4>
+            <button id="clearFilter" class="clear-filter-btn">Clear Filter</button>
             <div class="category-filter">
                 <ul id="categoryList">
                     <?php foreach ($categories as $category): ?>
@@ -20,6 +21,7 @@
                                 <?= htmlspecialchars($category['category_name']) ?>
                             </a>
                         </li>
+                        <div class="dropdown-divider"></div>
                     <?php endforeach; ?>
                 </ul>
             </div>
@@ -27,20 +29,26 @@
 
         <div class="events-list">
             <h4>List of Available Events</h4>
-            <div class="event-cards" id="eventCards">
+            <div class="events-cards" id="eventCards">
                 <?php if (empty($events)): ?>
                     <p>No current events available.</p>
                 <?php else: ?>
                     <?php foreach ($events as $event): ?>
                         <div class="event-card">
-                            <h5><?= htmlspecialchars($event['title']) ?></h5>
-                            <p><strong>Date:</strong> <?= htmlspecialchars(date('F j, Y, g:i a', strtotime($event['event_date']))) ?></p>
-                            <p><strong>Location:</strong> <?= htmlspecialchars($event['location']) ?></p>
-                            <a href="/event/view/<?= $event['eventId'] ?>">View Event</a>
+                            <div class="event-item">
+                                <h3><?= htmlspecialchars($event['title']) ?></h3>
+                                <p class="event-date"><?= htmlspecialchars(date('F j, Y, g:i a', strtotime($event['event_date']))) ?></p>
+                                <p class="event-location"><?= htmlspecialchars($event['location']) ?></p>
+
+                                <div class="btn-wrap">
+                                    <a class="btn-view" href="/events/view?eventId=<?= $event['eventId'] ?>">View Event</a>
+                                </div>
+                            </div>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
         </div>
+
     </div>
 </section>
