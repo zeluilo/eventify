@@ -43,6 +43,37 @@ class EventController
             ];
         }
     }
+
+    public function fetchEventDetails()
+{
+    if (isset($_GET['eventId']) && !empty($_GET['eventId'])) {
+        $eventId = $_GET['eventId'];
+        $event = $this->viewEventDetails->find('eventId', $eventId);
+        $categories = $this->categoryTable->findAll();
+
+        // If the event is found, return the event data as JSON
+        if ($event) {
+            echo json_encode([
+                'success' => true,
+                'eventId' => $event[0]['eventId'],
+                'title' => $event[0]['title'],
+                'description' => $event[0]['description'],
+                'event_date' => $event[0]['event_date'],
+                'location' => $event[0]['location'],
+                'categoryId' => $event[0]['categoryId'],
+            ],                 
+            'categories' => $categories, 
+        );
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Event not found']);
+        }
+        exit;
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Event ID is missing']);
+        exit;
+    }
+}
+
     
     public function save(): array
     {

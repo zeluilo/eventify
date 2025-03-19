@@ -12,11 +12,18 @@ if (isset($_SESSION['categoryCreationSuccess']) && $_SESSION['categoryCreationSu
       </script>";
 }
 
-include '../includes/error-message.php';
+// Check if the user is logged in or registered
+$isLoggedInOrRegistered = isset($_SESSION['userDetails']);
+
+// Check if the logged-in user's checkAdmin is "USER"
+$isUser = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 'USER';
+$isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 'ADMIN';
+
+include '../includes/event-modal.php';
 ?>
 
 <section id="home" class="home section dark-background" style="background-image: url('<?php echo '../images/events/' . $event['image']; ?>');">
-<div class="home-content">
+    <div class="home-content">
         <h2><?php echo $event['title']; ?></h2>
         <!-- <p>Create a new category for classifying events.</p> -->
         <!-- <a href="/users/home#categories" class="btn-get-started">View Categories</a> -->
@@ -26,26 +33,62 @@ include '../includes/error-message.php';
 <section class="event-section">
     <div class="event-details-container">
 
-        <h2 class="event-title"><?php echo htmlspecialchars($event['title']); ?></h2>
-
         <div class="event-image-wrapper">
             <img src="<?php echo '../images/events/' . $event['image']; ?>" alt="Event Image" class="event-image">
         </div>
 
         <div class="event-info">
-            <p><strong>Description:</strong> <?php echo nl2br(htmlspecialchars($event['description'])); ?></p>
-            <p><strong>Date & Time:</strong> <?php echo date('F j, Y g:i A', strtotime($event['event_date'])); ?></p>
-            <p><strong>Location:</strong> <?php echo htmlspecialchars($event['location']); ?></p>
-            <p><strong>Category:</strong> <?php echo htmlspecialchars($event['category_name']); ?></p>
-            <p><strong>Posted By:</strong> <?php echo htmlspecialchars($event['first_name'] . ' ' . $event['last_name']); ?></p>
-            <p><strong>Contact:</strong> <?php echo htmlspecialchars($event['email']); ?> | <?php echo htmlspecialchars($event['phone']); ?></p>
-            <p><strong>Event Created On:</strong> <?php echo date('F j, Y', strtotime($event['event_created'])); ?></p>
-            <p><strong>Last Updated:</strong> <?php echo date('F j, Y', strtotime($event['event_updated'])); ?></p>
-        </div>
+            <h2 class="event-title"><?php echo htmlspecialchars($event['title']); ?></h2>
 
-        <div class="event-actions">
-            <a href="/events/edit?eventId=<?php echo $event['eventId']; ?>" class="btn btn-edit">Edit Event</a>
-            <a href="/events/delete?eventId=<?php echo $event['eventId']; ?>" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this event?');">Delete Event</a>
+            <table class="event-details-table">
+                <tr>
+                    <td><strong>Description:</strong></td>
+                    <td><?php echo nl2br(htmlspecialchars($event['description'])); ?></td>
+                </tr>
+                <tr>
+                    <td><strong>Date:</strong></td>
+                    <td><?php echo date('F j, Y g:i A', strtotime($event['event_date'])); ?></td>
+                </tr>
+                <tr>
+                    <td><strong>Location:</strong></td>
+                    <td><?php echo htmlspecialchars($event['location']); ?></td>
+                </tr>
+                <tr>
+                    <td><strong>Category:</strong></td>
+                    <td><?php echo htmlspecialchars($event['category_name']); ?></td>
+                </tr>
+                <tr>
+                    <td><strong>Posted By:</strong></td>
+                    <td><?php echo htmlspecialchars($event['first_name'] . ' ' . $event['last_name']); ?></td>
+                </tr>
+                <tr>
+                    <td><strong>Contact:</strong></td>
+                    <td><?php echo htmlspecialchars($event['email']); ?> | <?php echo htmlspecialchars($event['phone']); ?></td>
+                </tr>
+                <?php if ($isAdmin) : ?>
+                    <tr>
+                        <td><strong>Event Created On:</strong></td>
+                        <td><?php echo date('F j, Y g:i A', strtotime($event['event_created'])); ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last Updated:</strong></td>
+                        <td>
+                            <?php
+                            if (!empty($event['event_updated'])) {
+                                echo date('F j, Y', strtotime($event['event_updated']));
+                            } else {
+                                echo "Not updated yet";
+                            }
+                            ?>
+                        </td>
+                    </tr>
+                <? endif; ?>
+            </table>
+
+            <div class="event-actions">
+                <a href="#" class="btn btn-edit" onclick="openEditModal(<?php echo $event['eventId']; ?>)">Edit Event</a>
+                <a href="/events/delete?eventId=<?php echo $event['eventId']; ?>" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this event?');">Delete Event</a>
+            </div>
         </div>
 
     </div>
