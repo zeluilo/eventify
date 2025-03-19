@@ -14,11 +14,28 @@ class EventController
         $this->eventTable = $eventTable;
     }
 
+    public function view()
+    {
+        $events = $this->eventTable->findAll();
+        $categories = $this->categoryTable->findAll();
+
+        return [
+            'template' => 'event-menu.php',
+            'variables' => [
+                'events' => $events,
+                'categories' => $categories,
+            ],
+            'title' => 'Event Menu - Eventify'
+        ];
+    }
+
     public function save(): array
     {
         $category = $this->categoryTable->findAll();
+        $events = $this->eventTable->findAll();
         $currentDateTime = date('Y-m-d\TH:i');
         $message = '';
+        // echo "<script>console.log('User Details: ' + " . json_encode($_SESSION['userDetails']) . ");</script>";
     
         // Allowed extensions for image uploads
         $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp'];
@@ -40,7 +57,7 @@ class EventController
     
             // Check if the file extension is allowed
             if (!in_array($picType, $allowedExtensions)) {
-                $message = 'Invalid file format. Please upload an image in one of the following formats: PNG, JPG, JPEG, GIF, BMP.';
+                $message = 'Invalid file format. Please choose a valid image.';
                 $_SESSION['errorMessage'] = $message;
             } else {
                 // Validate the image file
@@ -109,7 +126,8 @@ class EventController
                 'currentDateTime' => $currentDateTime,
                 'category' => $category,
                 'message' => $message,
-                'event' => $event
+                'event' => $event,
+                'events' => $events
             ],
             'title' => $eventId ? 'Edit Event - Eventify' : 'Create Event - Eventify'
         ];

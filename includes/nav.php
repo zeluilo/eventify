@@ -15,11 +15,13 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
         <li><a href="/users/home/#about">About</a></li>
         <li><a href="/category/create">Category</a></li>
         <li class="dropdown">
-            <a href="/events/create" class="dropdown-toggle"><span>Events</span> <i class="toggle-dropdown"></i></a>
+            <a href="/events/view" class="dropdown-toggle"><span>Events</span> <i class="toggle-dropdown"></i></a>
+            <?php if ($isAdmin || $isUser) : ?>
             <ul class="dropdown-menu">
-                <li><a href="/events/create">Create an Event</a></li>
-                <li><a href="#">View Available Events</a></li>
+                <li><a href="/events/save">Create an Event</a></li>
+                <li><a href="/events/view">View Available Events</a></li>
             </ul>
+            <?php endif ?>
         </li>
         <li><a href="#contact">Contact</a></li>
         <!-- <li class="user-dropdown">

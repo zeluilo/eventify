@@ -42,3 +42,50 @@ const minutes = String(now.getMinutes()).padStart(2, '0');
 const currentDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
 
 document.getElementById("event_datetime").min = currentDateTime;
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const eventCards = document.getElementById('eventCards');
+
+    let timeout = null;
+
+    searchInput.addEventListener('keyup', function () {
+        clearTimeout(timeout);
+
+        timeout = setTimeout(() => {
+            const searchQuery = searchInput.value.trim();
+
+            fetch('/events/filter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'search=' + encodeURIComponent(searchQuery)
+            })
+            .then(response => response.text())
+            .then(html => {
+                eventCards.innerHTML = html;
+            });
+        }, 300); // Delay to prevent too many requests (debounce)
+    });
+
+    // Optional: Still include category filter click handlers
+    const categoryLinks = document.querySelectorAll('.category-link');
+    categoryLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            const categoryId = this.getAttribute('data-category');
+
+            fetch('/events/filter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'category=' + encodeURIComponent(categoryId)
+            })
+            .then(response => response.text())
+            .then(html => {
+                eventCards.innerHTML = html;
+                searchInput.value = ''; // Clear search input if category is used
+            });
+        });
+    });
+});
+</script>

@@ -2,7 +2,7 @@
 // Show success message after event creation
 if (isset($_SESSION['eventCreationSuccess']) && $_SESSION['eventCreationSuccess'] === true) {
     unset($_SESSION['eventCreationSuccess']);
-    echo "
+    echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
       <script>
         Swal.fire({
             title: 'Event Created Successfully!',
@@ -13,6 +13,7 @@ if (isset($_SESSION['eventCreationSuccess']) && $_SESSION['eventCreationSuccess'
       </script>";
 }
 
+// Include error messages
 include '../includes/error-message.php';
 ?>
 
@@ -26,9 +27,8 @@ include '../includes/error-message.php';
 
 <section id="about" class="about-section">
     <div class="form-container">
-        <form action="/events/<?php echo isset($event) ? 'edit/' . $event['eventId'] : 'create'; ?>" method="post" enctype="multipart/form-data" class="php-email-form">
+        <form action="/events/<?php echo isset($event) ? 'edit/' . $event['eventId'] : 'save'; ?>" method="post" enctype="multipart/form-data" class="php-email-form">
             <h2 class="form-title"><?php echo isset($event) ? 'Edit Event' : 'Create New Event'; ?></h2>
-
             <div class="form-group">
                 <label for="title">Event Title</label>
                 <input type="text" id="title" name="title" value="<?php echo isset($event) ? $event['title'] : ''; ?>" placeholder="Enter Title of Event" required>
@@ -41,7 +41,7 @@ include '../includes/error-message.php';
 
             <div class="form-group">
                 <label for="event_datetime">Event Date & Time</label>
-                <input type="datetime-local" id="event_datetime" name="event_datetime" value="<?php echo isset($event) ? date('Y-m-d\TH:i', strtotime($event['event_date'])) : ''; ?>" required min="<?= $currentDateTime ?>">
+                <input type="datetime-local" id="event_datetime" name="event_date" value="<?php echo isset($event) ? date('Y-m-d\TH:i', strtotime($event['event_date'])) : ''; ?>" required min="<?= $currentDateTime ?>">
             </div>
 
             <div class="form-group">
@@ -52,6 +52,7 @@ include '../includes/error-message.php';
             <div class="form-group">
                 <label for="categoryId">Category</label>
                 <select id="categoryId" name="categoryId" required>
+                    <option value="" disabled selected>-- Select a category --</option>
                     <?php
                     foreach ($category as $row) {
                         echo '<option value="' . $row['categoryId'] . '"' . (isset($event) && $event['categoryId'] == $row['categoryId'] ? ' selected' : '') . '>' . $row['category_name'] . '</option>';
@@ -76,36 +77,37 @@ include '../includes/error-message.php';
     </div>
 </section>
 
-<section id="event-management" class="event-management-section">
+<!-- Event Management Table -->
+<!-- <section id="event-management" class="event-management-section">
     <h2>Manage Events</h2>
-    <table class="events-table">
-        <thead>
-            <tr>
-                <th>Event Title</th>
-                <th>Description</th>
-                <th>Date & Time</th>
-                <th>Location</th>
-                <th>Category</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            foreach ($events as $event) {
-                echo '<tr>';
-                echo '<td>' . htmlspecialchars($event['title']) . '</td>';
-                echo '<td>' . htmlspecialchars($event['description']) . '</td>';
-                echo '<td>' . date('Y-m-d H:i', strtotime($event['event_date'])) . '</td>';
-                echo '<td>' . htmlspecialchars($event['location']) . '</td>';
-                echo '<td>' . htmlspecialchars($event['category_name']) . '</td>';
-                echo '<td>';
-                echo '<a href="/events/view/' . $event['eventId'] . '" class="btn-view">View</a>';
-                echo '<a href="/events/edit/' . $event['eventId'] . '" class="btn-edit">Edit</a>';
-                echo '<a href="/events/delete/' . $event['eventId'] . '" class="btn-delete" onclick="return confirm(\'Are you sure you want to delete this event?\')">Delete</a>';
-                echo '</td>';
-                echo '</tr>';
-            }
-            ?>
-        </tbody>
-    </table>
-</section>
+
+    <?php if (empty($events)): ?>
+        <p>No current events</p>
+    <?php else: ?>
+        <table class="events-table">
+            <thead>
+                <tr>
+                    <th>Event Title</th>
+                    <th>Date & Time</th>
+                    <th>Location</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($events as $event) {
+                    echo '<tr>';
+                    echo '<td>' . htmlspecialchars($event['title']) . '</td>';
+                    echo '<td>' . date('Y-m-d H:i', strtotime($event['event_date'])) . '</td>';
+                    echo '<td>' . htmlspecialchars($event['location']) . '</td>';
+                    echo '<td>';
+                    echo '<a href="/events/view/' . $event['eventId'] . '" class="btn-view">View</a>';
+                    echo '<a href="/events/delete/' . $event['eventId'] . '" class="btn-delete" onclick="return confirm(\'Are you sure you want to delete this event?\')">Delete</a>';
+                    echo '</td>';
+                    echo '</tr>';
+                }
+                ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+</section> -->
