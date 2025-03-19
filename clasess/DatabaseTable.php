@@ -91,52 +91,48 @@ class DatabaseTable
 		$stmt->execute($record);
 	}
 
-	public function searchEvents($searchQuery)
+	public function search($columns = [], $searchTerm = '', $additionalCondition = '')
 	{
-		$searchQuery = '%' . $searchQuery . '%';
+		if (empty($columns)) return [];
 
-		$sql = "SELECT * FROM events WHERE title LIKE :searchQuery";
+		$searchTerm = '%' . $searchTerm . '%';
+		$likeClauses = [];
+
+		foreach ($columns as $column) {
+			$likeClauses[] = "{$column} LIKE :searchTerm";
+		}
+
+		$whereClause = implode(' OR ', $likeClauses);
+		if (!empty($additionalCondition)) {
+			$whereClause = "($whereClause) AND {$additionalCondition}";
+		}
+
+		$sql = "SELECT * FROM {$this->table} WHERE {$whereClause}";
 		$stmt = $this->pdo->prepare($sql);
-		$stmt->bindValue(':searchQuery', $searchQuery, PDO::PARAM_STR);
+		$stmt->bindValue(':searchTerm', $searchTerm, PDO::PARAM_STR);
 		$stmt->execute();
 
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	public function searchCategory($searchQuery)
+	public function searchEvents($searchTerm)
 	{
-		$searchQuery = '%' . $searchQuery . '%';
-
-		$sql = "SELECT * FROM category WHERE category_name LIKE :searchQuery";
-		$stmt = $this->pdo->prepare($sql);
-		$stmt->bindValue(':searchQuery', $searchQuery, PDO::PARAM_STR);
-		$stmt->execute();
-
-		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+		return $this->search(['title'], $searchTerm);
 	}
 
-	public function searchUsers($searchQuery)
+	public function searchCategory($searchTerm)
 	{
-		$searchQuery = '%' . $searchQuery . '%';
-
-		$sql = "SELECT * FROM users WHERE (userId LIKE :searchQuery OR first_name LIKE :searchQuery OR last_name LIKE :searchQuery) AND user_role = 'USER'";
-		$stmt = $this->pdo->prepare($sql);
-		$stmt->bindValue(':searchQuery', $searchQuery, PDO::PARAM_STR);
-		$stmt->execute();
-
-		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+		return $this->search(['categoryId'], $searchTerm);
 	}
 
-	public function searchAdmins($searchQuery)
+	public function searchUsers($searchTerm)
 	{
-		$searchQuery = '%' . $searchQuery . '%';
+		return $this->search(['userId', 'first_name', 'last_name'], $searchTerm, "user_role = 'USER'");
+	}
 
-		$sql = "SELECT * FROM users WHERE (userId LIKE :searchQuery OR first_name LIKE :searchQuery OR last_name LIKE :searchQuery) AND user_role = 'ADMIN'";
-		$stmt = $this->pdo->prepare($sql);
-		$stmt->bindValue(':searchQuery', $searchQuery, PDO::PARAM_STR);
-		$stmt->execute();
-
-		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	public function searchAdmins($searchTerm)
+	{
+		return $this->search(['userId', 'first_name', 'last_name'], $searchTerm, "user_role = 'ADMIN'");
 	}
 	public function join($query, $values)
 	{

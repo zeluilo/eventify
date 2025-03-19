@@ -207,6 +207,7 @@ class UsersController
             'variables' => ['show_message' => $show_message]
         ];
     }
+
     public function session()
     {
         if (!isset($_SESSION)) {

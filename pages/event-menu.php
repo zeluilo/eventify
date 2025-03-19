@@ -13,33 +13,33 @@
         <div class="categories">
             <h4>Filter by Categories</h4>
             <div class="category-filter">
-                <ul>
-                    <?php
-                    foreach ($categories as $category) {
-                        echo '<li><a href="/events?category=' . $category['categoryId'] . '">' . $category['category_name'] . '</a></li>';
-                    }
-                    ?>
+                <ul id="categoryList">
+                    <?php foreach ($categories as $category): ?>
+                        <li>
+                            <a href="#" class="category-link" data-category="<?= htmlspecialchars($category['categoryId']) ?>">
+                                <?= htmlspecialchars($category['category_name']) ?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
                 </ul>
             </div>
         </div>
 
         <div class="events-list">
-        <h4>List of Available Events</h4>
-            <div class="event-cards">
-                <?php
-                if (empty($events)) {
-                    echo "<p>No current events available.</p>";
-                } else {
-                    foreach ($events as $event) {
-                        echo '<div class="event-card">';
-                        echo '<h5>' . htmlspecialchars($event['title']) . '</h5>';
-                        echo '<p><strong>Date:</strong> ' . htmlspecialchars(date('F j, Y, g:i a', strtotime($event['event_date']))) . '</p>';
-                        echo '<p><strong>Location:</strong> ' . htmlspecialchars($event['location']) . '</p>';
-                        echo '<a href="/event/view/' . $event['eventId'] . '">View Event</a>';
-                        echo '</div>';
-                    }
-                }
-                ?>
+            <h4>List of Available Events</h4>
+            <div class="event-cards" id="eventCards">
+                <?php if (empty($events)): ?>
+                    <p>No current events available.</p>
+                <?php else: ?>
+                    <?php foreach ($events as $event): ?>
+                        <div class="event-card">
+                            <h5><?= htmlspecialchars($event['title']) ?></h5>
+                            <p><strong>Date:</strong> <?= htmlspecialchars(date('F j, Y, g:i a', strtotime($event['event_date']))) ?></p>
+                            <p><strong>Location:</strong> <?= htmlspecialchars($event['location']) ?></p>
+                            <a href="/event/view/<?= $event['eventId'] ?>">View Event</a>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
     </div>
