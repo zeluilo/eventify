@@ -22,16 +22,19 @@ class CategoryController
             'title' => 'Record Management System'
         ];
     }
-
-    public function create(): array
+    public function save(): array
     {
         $message = '';
-
         if (isset($_POST['submit'])) {
             $category_name = $_POST['category_name'];
-
+    
+            // Check if the category is being edited or created
+            $categoryId = isset($_POST['categoryId']) ? $_POST['categoryId'] : null;
+            
+            // Check if the category already exists
             $category_exist = $this->categoryTable->find('category_name', $category_name);
-            if (!empty($category_exist)) {
+            
+            if (!empty($category_exist) && (!$categoryId || $category_exist['category_id'] != $categoryId)) {
                 $message = 'Category exists already';
                 $_SESSION['errorMessage'] = $message;
                 return [
@@ -39,73 +42,49 @@ class CategoryController
                     'variables' => [
                         'message' => $message,
                     ],
-                    'title' => 'Add Category - Eventify',
+                    'title' => 'Save Category - Eventify',
                 ];
             }
-
+            
             $values = [
-                'category_name' => $_POST['category_name'],
-                'datecreate' => date('Y-m-d H:i')
+                'category_name' => $category_name,
             ];
-            $inserted = $this->categoryTable->insert($values);
-
-            if ($inserted) {
-                $message = 'Failed to add category. Please try again.';
-                $_SESSION['errorMessage'] = $message;
+            
+            // If categoryId exists, it's an edit, else it's a new creation
+            if ($categoryId) {
+                // Update existing category
+                $updated = $this->categoryTable->update($values, $categoryId);
+    
+                if ($updated) {
+                    $_SESSION['categoryUpdateSuccess'] = true;
+                    // header('Location: /events/view');
+                    exit;
+                } else {
+                    $_SESSION['errorMessage'] = 'Failed to update category. Please try again.';
+                }
             } else {
-                $_SESSION['categoryCreationSuccess'] = true;
+                // Create new category
+                $values['datecreate'] = date('Y-m-d H:i');
+                $inserted = $this->categoryTable->insert($values);
+    
+                if ($inserted) {
+                    $_SESSION['categoryCreationSuccess'] = true;
+                    header('Location: /category/save');
+                    exit;
+                } else {
+                    $_SESSION['errorMessage'] = 'Failed to add category. Please try again.';
+                }
             }
         }
-
+        
         return [
             'template' => 'category.php',
             'variables' => [
                 'message' => $message,
             ],
-            'title' => 'Add Category - Eventify',
+            'title' => 'Save Category - Eventify',
         ];
     }
-
-    public function update(): array
-    {
-        $this->checkLogin();
-        $categoryId = isset($_GET['categoryId']) ? $_GET['categoryId'] : null;
-        $category = $this->categoryTable->find('categoryId', $categoryId)[0];
-
-        // Fetch events for the current category
-        $events = $this->eventTable->find('categoryId', $categoryId);
-
-        $message = '';
-
-        if (isset($_POST['submit'])) {
-            $values = [
-                'categoryId' => $_POST['categoryId'],
-                'catname' => $_POST['catname'],
-                'dateupdate' => date('Y-m-d H:i')
-            ];
-
-            $inserted = $this->categoryTable->update($values);
-
-            if ($inserted) {
-                $message = 'Failed to add category. Please try again.';
-            } else {
-                $message = 'Category updated successfully!';
-            }
-
-            header('location: /pages/manageCategory');
-        }
-
-        return [
-            'template' => 'editCategory.php',
-            'variables' => [
-                'category' => $category,
-                'events' => $events,
-                'message' => $message
-            ],
-            'title' => 'Edit category'
-        ];
-    }
-
 
     public function manage(): array
     {

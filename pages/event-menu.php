@@ -11,6 +11,21 @@
       </script>";
 }
 
+if (isset($_SESSION['eventDeletionSuccess']) && $_SESSION['eventDeletionSuccess'] === true) {
+    unset($_SESSION['eventDeletionSuccess']);
+    echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+    <script>
+        Swal.fire({
+            title: 'Event Deleted Successfully!',
+            text: 'The event has been removed from the list.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    </script>";
+}
+
+// Include error messages
+include '../includes/error-message.php';
 ?>
 
 <section id="home" class="home section dark-background">

@@ -43,7 +43,6 @@ class EventController
             ];
         }
     }
-
     public function fetchEventDetails()
     {
         if (isset($_GET['eventId']) && !empty($_GET['eventId'])) {
@@ -74,7 +73,6 @@ class EventController
             exit;
         }
     }
-    
     public function save(): array
     {
         $category = $this->categoryTable->findAll();
@@ -170,8 +168,31 @@ class EventController
             ],
             'title' => $isUpdate ? 'Edit Event - Eventify' : 'Create Event - Eventify'
         ];
-    }    
-
+    } 
+    public function delete(): array
+    {
+        $message = '';
+        if (isset($_GET['eventId'])) {
+            $eventId = $_GET['eventId'];
+            $event = $this->eventTable->find('eventId', $eventId);
+            if ($event) {
+                // Delete the event if it exists
+                $this->eventTable->delete($eventId);
+                $_SESSION['eventDeletionSuccess'] = true;
+                header('location: /events/view');
+                exit();
+            } else {
+                // Event not found, show an error message
+                $message = "Event not found.";
+                $_SESSION['errorMessage'] = $message;
+                header('location: /events/view');
+                exit();
+            }
+        }
+        header('location: /events/view');
+        exit();
+    }
+    
     public function filter()
     {
         $search = $_POST['search'] ?? '';
@@ -201,4 +222,5 @@ class EventController
         }
         exit;
     }
+
 }

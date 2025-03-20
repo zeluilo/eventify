@@ -7,53 +7,81 @@ console.log("Script is working!");
 // ==============================
 // SweetAlert Logout Confirmation
 // ==============================
-function confirmAction(event, actionUrl, actionType, itemType) {
+function confirmLogout(event) {
     event.preventDefault();
-    const actionMessages = {
-        'logout': {
-            title: 'Are you sure?',
-            text: 'Do you really want to logout?',
-            confirmButtonText: 'Yes, logout',
-            cancelButtonText: 'Cancel'
-        },
-        'deleteEvent': {
-            title: 'Are you sure?',
-            text: 'Do you really want to delete event?',
-            confirmButtonText: 'Yes, Delete',
-            cancelButtonText: 'Cancel'
-        },
-        'deleteUser': {
-            title: 'Are you sure?',
-            text: 'Do you really want to delete user?',
-            confirmButtonText: 'Yes, Delete',
-            cancelButtonText: 'Cancel'
-        },
-        'deleteCategory': {
-            title: 'Are you sure?',
-            text: 'Do you really want to delete category?',
-            confirmButtonText: 'Yes, Delete',
-            cancelButtonText: 'Cancel'
-        }
-    };
-
-    const action = actionMessages[actionType];
-
     Swal.fire({
-        title: action.title,
-        text: action.text,
+        title: 'Are you sure?',
+        text: "Do you really want to logout?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: action.confirmButtonText,
-        cancelButtonText: action.cancelButtonText
+        confirmButtonText: 'Yes, logout',
+        cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
-            window.location.href = actionUrl;
+            window.location.href = '/users/logout';
         }
     });
 }
 
+function confirmDelete(event, eventId) {
+    event.preventDefault();
+    console.log("Event ID:", eventId); // Log the event ID to check if it's correct
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to delete the event?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Delete',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Redirect to the delete URL with the event ID
+            window.location.href = '/events/delete?eventId=' + eventId;
+        }
+    });
+}
+
+
+function confirmUser(event) {
+    event.preventDefault();
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to delete user?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Delete',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '/users/delete';
+        }
+    });
+}
+
+function confirmCategory(event) {
+    event.preventDefault();
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to delete category?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Delete',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '/category/delete';
+        }
+    });
+}
 
 
 // ==============================

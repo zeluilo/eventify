@@ -73,7 +73,7 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
                         <td>
                             <?php
                             if (!empty($event['event_updated'])) {
-                                echo date('F j, Y', strtotime($event['event_updated']));
+                                echo date('F j, Y g:i A', strtotime($event['event_updated']));
                             } else {
                                 echo "Not updated yet";
                             }
@@ -82,11 +82,19 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
                     </tr>
                 <? endif; ?>
             </table>
+            <?php if ($isAdmin || $isUser) : ?>
 
-            <div class="event-actions">
-                <a href="/events/save?eventId=<?php echo $event['eventId']; ?>" class="btn btn-edit">Edit Event</a>
-                <a href="/events/delete?eventId=<?php echo $event['eventId']; ?>" class="btn btn-delete" onclick="confirmAction(event, '/events/delete', 'deleteEvent')">Delete Event</a>
-            </div>
+                <div class="event-actions">
+                    <a href="/events/save?eventId=<?php echo $event['eventId']; ?>" class="btn btn-edit">Edit Event</a>
+                    <a href="#" class="btn btn-delete"
+                        onclick="confirmDelete(event, <?php echo $event['eventId']; ?>)">
+                        Delete Event
+                    </a>
+
+
+                </div>
+            <? endif; ?>
+
         </div>
 
     </div>

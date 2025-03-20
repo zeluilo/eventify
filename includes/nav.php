@@ -13,7 +13,7 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
     <ul>
         <li><a href="/users/home" class="active">Home</a></li>
         <li><a href="/users/home#about">About</a></li>
-        <li><a href="/category/create">Category</a></li>
+        <li><a href="/category/save">Category</a></li>
         <li class="dropdown">
             <a href="/events/view" class="dropdown-toggle"><span>Events</span> <i class="toggle-dropdown"></i></a>
             <?php if ($isAdmin || $isUser) : ?>
@@ -65,7 +65,7 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
                     <?php endif; ?>
                     <div class="dropdown-divider"></div>
                     <li>
-                        <a class="dropdown-item" href="#" onclick="confirmAction(event, '/users/logout', 'logout')">Logout</a>
+                        <a class="dropdown-item" href="#" onclick="confirmLogout(event)">Logout</a>
                     </li>
                 </ul>
         </li>
