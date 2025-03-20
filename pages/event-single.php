@@ -18,8 +18,6 @@ $isLoggedInOrRegistered = isset($_SESSION['userDetails']);
 // Check if the logged-in user's checkAdmin is "USER"
 $isUser = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 'USER';
 $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 'ADMIN';
-
-include '../includes/event-modal.php';
 ?>
 
 <section id="home" class="home section dark-background" style="background-image: url('<?php echo '../images/events/' . $event['image']; ?>');">
@@ -86,7 +84,7 @@ include '../includes/event-modal.php';
             </table>
 
             <div class="event-actions">
-                <a href="#" class="btn btn-edit" onclick="openEditModal(<?php echo $event['eventId']; ?>)">Edit Event</a>
+                <a href="/events/save?eventId=<?php echo $event['eventId']; ?>" class="btn btn-edit">Edit Event</a>
                 <a href="/events/delete?eventId=<?php echo $event['eventId']; ?>" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this event?');">Delete Event</a>
             </div>
         </div>

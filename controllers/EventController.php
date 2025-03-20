@@ -45,35 +45,35 @@ class EventController
     }
 
     public function fetchEventDetails()
-{
-    if (isset($_GET['eventId']) && !empty($_GET['eventId'])) {
-        $eventId = $_GET['eventId'];
-        $event = $this->viewEventDetails->find('eventId', $eventId);
-        $categories = $this->categoryTable->findAll();
-
-        // If the event is found, return the event data as JSON
-        if ($event) {
-            echo json_encode([
-                'success' => true,
-                'eventId' => $event[0]['eventId'],
-                'title' => $event[0]['title'],
-                'description' => $event[0]['description'],
-                'event_date' => $event[0]['event_date'],
-                'location' => $event[0]['location'],
-                'categoryId' => $event[0]['categoryId'],
-            ],                 
-            'categories' => $categories, 
-        );
+    {
+        if (isset($_GET['eventId']) && !empty($_GET['eventId'])) {
+            $eventId = $_GET['eventId'];
+            $event = $this->viewEventDetails->find('eventId', $eventId);
+            $categories = $this->categoryTable->findAll();
+    
+            // If the event is found, return the event data and categories as JSON
+            if ($event) {
+                echo json_encode([
+                    'success' => true,
+                    'event' => [
+                        'eventId' => $event[0]['eventId'],
+                        'title' => $event[0]['title'],
+                        'description' => $event[0]['description'],
+                        'event_date' => $event[0]['event_date'],
+                        'location' => $event[0]['location'],
+                        'categoryId' => $event[0]['categoryId'],
+                    ],
+                    'categories' => $categories,
+                ]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Event not found']);
+            }
+            exit;
         } else {
-            echo json_encode(['success' => false, 'message' => 'Event not found']);
+            echo json_encode(['success' => false, 'message' => 'Event ID is missing']);
+            exit;
         }
-        exit;
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Event ID is missing']);
-        exit;
     }
-}
-
     
     public function save(): array
     {
@@ -81,91 +81,84 @@ class EventController
         $events = $this->eventTable->findAll();
         $currentDateTime = date('Y-m-d\TH:i');
         $message = '';
-        // echo "<script>console.log('User Details: ' + " . json_encode($_SESSION['userDetails']) . ");</script>";
-
-        // Allowed extensions for image uploads
+    
+        $eventId = $_POST['eventId'] ?? ($_GET['eventId'] ?? null);
+        $isUpdate = !empty($eventId);
+        $existingEvent = $isUpdate ? $this->eventTable->find('eventId', $eventId)[0] : null;
+        $existingImage = $existingEvent['image'] ?? null;
+    
         $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp'];
-
-        // Check if the event ID is set for editing an event
-        $eventId = isset($_GET['eventId']) ? $_GET['eventId'] : null;
-
-        if (isset($_FILES["image"])) {
-            $for_directory = "images/events/";
-
-            // Check if the directory exists, if not, create it
-            if (!is_dir($for_directory)) {
-                mkdir($for_directory, 0775, true);
-            }
-
-            // Get the file extension of the image
-            $for_pic = $for_directory . basename($_FILES["image"]["name"]);
-            $picType = strtolower(pathinfo($for_pic, PATHINFO_EXTENSION));
-
-            // Check if the file extension is allowed
-            if (!in_array($picType, $allowedExtensions)) {
-                $message = 'Invalid file format. Please choose a valid image.';
-                $_SESSION['errorMessage'] = $message;
-            } else {
-                // Validate the image file
-                $validate = getimagesize($_FILES["image"]["tmp_name"]);
-                if ($validate === false) {
-                    $message = 'Invalid image file format. Please choose a valid image.';
+        $uploadDir = "images/events/";
+    
+        // Create directory if not exists
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0775, true);
+        }
+    
+        // Handle form submission
+        if (isset($_POST['submit'])) {
+            $imageName = $existingImage;
+            $uploadValid = true;
+    
+            if (isset($_FILES['image']) && $_FILES['image']['name'] !== "") {
+                $targetPath = $uploadDir . basename($_FILES['image']['name']);
+                $fileExtension = strtolower(pathinfo($targetPath, PATHINFO_EXTENSION));
+    
+                // Validate extension
+                if (!in_array($fileExtension, $allowedExtensions)) {
+                    $message = 'Invalid file format. Please choose a valid image.';
                     $_SESSION['errorMessage'] = $message;
+                    $uploadValid = false;
                 } else {
-                    if (isset($_POST['submit'])) {
-                        // Attempt to move the uploaded file
-                        $browse = move_uploaded_file($_FILES["image"]["tmp_name"], $for_pic);
-
-                        if (!$browse) {
+                    // Validate image
+                    $check = getimagesize($_FILES["image"]["tmp_name"]);
+                    if ($check === false) {
+                        $message = 'Uploaded file is not a valid image.';
+                        $_SESSION['errorMessage'] = $message;
+                        $uploadValid = false;
+                    } else {
+                        // Upload image
+                        if (move_uploaded_file($_FILES["image"]["tmp_name"], $targetPath)) {
+                            $imageName = $_FILES["image"]["name"];
+                        } else {
                             $message = 'Failed to upload image. Please try again.';
                             $_SESSION['errorMessage'] = $message;
-                        } else {
-                            $values = [
-                                'title' => $_POST['title'],
-                                'description' => $_POST['description'],
-                                'location' => $_POST['location'],
-                                'event_date' => $_POST['event_date'],
-                                'categoryId' => $_POST['categoryId'],
-                                'image' => $_FILES["image"]["name"],
-                                'datecreate' => date('Y-m-d H:i'),
-                                'userId' => $_SESSION['userDetails']["userId"]
-                            ];
-
-                            // If eventId is set, we're editing an existing event
-                            if ($eventId) {
-                                $updateSuccess = $this->eventTable->update($eventId, $values);
-                                if ($updateSuccess) {
-                                    $message = 'Event updated successfully!';
-                                    $_SESSION['eventUpdateSuccess'] = true;
-                                } else {
-                                    $message = 'Failed to update event. Please try again.';
-                                    $_SESSION['errorMessage'] = $message;
-                                }
-                            } else {
-                                // If no eventId, we're creating a new event
-                                $inserted = $this->eventTable->insert($values);
-
-                                if ($inserted) {
-                                    $message = 'Failed to create event. Please try again.';
-                                    $_SESSION['errorMessage'] = $message;
-                                } else {
-                                    $_SESSION['eventCreationSuccess'] = true;
-                                }
-                            }
+                            $uploadValid = false;
                         }
                     }
                 }
             }
+    
+            if ($uploadValid) {
+                $values = [
+                    'title' => $_POST['title'],
+                    'description' => $_POST['description'],
+                    'location' => $_POST['location'],
+                    'event_date' => $_POST['event_date'],
+                    'categoryId' => $_POST['categoryId'],
+                    'image' => $imageName,
+                    'userId' => $_SESSION['userDetails']["userId"]
+                ];
+    
+                if ($isUpdate) {
+                    $values['eventId'] = $eventId;
+                    $values['dateupdate'] = date('Y-m-d H:i');
+                    $this->eventTable->update($values);
+                    $_SESSION['eventUpdateSuccess'] = true;
+                    header('Location: /events/view');
+                    exit;
+                } else {
+                    $values['datecreate'] = date('Y-m-d H:i');
+                    $this->eventTable->insert($values);
+                    $_SESSION['eventCreationSuccess'] = true;
+                    header('Location: /events/create');
+                    exit;
+                }
+            }
         }
-
-        // Fetch the existing event data if we're editing
-        if ($eventId) {
-            $event = $this->eventTable->find('eventId', $eventId);
-        } else {
-            $event = null;
-        }
-
-
+    
+        $event = $isUpdate ? [$existingEvent] : null;
+    
         return [
             'template' => 'events.php',
             'variables' => [
@@ -175,9 +168,9 @@ class EventController
                 'event' => $event,
                 'events' => $events
             ],
-            'title' => $eventId ? 'Edit Event - Eventify' : 'Create Event - Eventify'
+            'title' => $isUpdate ? 'Edit Event - Eventify' : 'Create Event - Eventify'
         ];
-    }
+    }    
 
     public function filter()
     {

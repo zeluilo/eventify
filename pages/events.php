@@ -27,26 +27,27 @@ include '../includes/error-message.php';
 
 <section id="about" class="about-section">
     <div class="form-container">
-        <form action="/events/<?php echo isset($event) ? 'edit/' . $event['eventId'] : 'save'; ?>" method="post" enctype="multipart/form-data" class="php-email-form">
+        <form action="/events/<?php echo isset($event) ? 'save?=' . $event[0]['eventId'] : 'save'; ?>" method="post" enctype="multipart/form-data" class="php-email-form">
             <h2 class="form-title"><?php echo isset($event) ? 'Edit Event' : 'Create New Event'; ?></h2>
+            <input type="hidden" name="eventId" value="<?php echo isset($event) ? $event[0]['eventId'] : null ?>"/>
             <div class="form-group">
                 <label for="title">Event Title</label>
-                <input type="text" id="title" name="title" value="<?php echo isset($event) ? $event['title'] : ''; ?>" placeholder="Enter Title of Event" required>
+                <input type="text" id="title" name="title" value="<?php echo isset($event) ? htmlspecialchars($event[0]['title']) : ''; ?>" placeholder="Enter Title of Event" required>
             </div>
 
             <div class="form-group">
                 <label for="description">Event Description</label>
-                <textarea id="description" name="description" rows="5" placeholder="Enter Description of Event" required><?php echo isset($event) ? $event['description'] : ''; ?></textarea>
+                <textarea id="description" name="description" rows="5" placeholder="Enter Description of Event" required><?php echo isset($event) ? htmlspecialchars($event[0]['description']) : ''; ?></textarea>
             </div>
 
             <div class="form-group">
                 <label for="event_datetime">Event Date & Time</label>
-                <input type="datetime-local" id="event_datetime" name="event_date" value="<?php echo isset($event) ? date('Y-m-d\TH:i', strtotime($event['event_date'])) : ''; ?>" required min="<?= $currentDateTime ?>">
+                <input type="datetime-local" id="event_datetime" name="event_date" value="<?php echo isset($event) ? date('Y-m-d\TH:i', strtotime($event[0]['event_date'])) : ''; ?>" required min="<?= $currentDateTime ?>">
             </div>
 
             <div class="form-group">
                 <label for="location">Location</label>
-                <input type="text" id="location" name="location" value="<?php echo isset($event) ? $event['location'] : ''; ?>" placeholder="Enter Location of Event" required>
+                <input type="text" id="location" name="location" value="<?php echo isset($event) ? htmlspecialchars($event[0]['location']) : ''; ?>" placeholder="Enter Location of Event" required>
             </div>
 
             <div class="form-group">
@@ -55,7 +56,7 @@ include '../includes/error-message.php';
                     <option value="" disabled selected>-- Select a category --</option>
                     <?php
                     foreach ($category as $row) {
-                        echo '<option value="' . $row['categoryId'] . '"' . (isset($event) && $event['categoryId'] == $row['categoryId'] ? ' selected' : '') . '>' . $row['category_name'] . '</option>';
+                        echo '<option value="' . $row['categoryId'] . '"' . (isset($event) && $event[0]['categoryId'] == $row['categoryId'] ? ' selected' : '') . '>' . htmlspecialchars($row['category_name']) . '</option>';
                     }
                     ?>
                 </select>
@@ -63,8 +64,8 @@ include '../includes/error-message.php';
 
             <div class="form-group">
                 <label for="image">Event Image</label>
-                <?php if (isset($event) && !empty($event['image'])): ?>
-                    <p>Current Image: <img src="images/events/<?php echo $event['image']; ?>" alt="Event Image" width="100"></p>
+                <?php if (isset($event) && !empty($event[0]['image'])): ?>
+                    <p>Current Image: <img src="images/events/<?php echo htmlspecialchars($event[0]['image']); ?>" alt="Event Image" width="100"></p>
                 <?php endif; ?>
                 <input type="file" id="image" name="image" accept="image/*">
             </div>
@@ -72,10 +73,10 @@ include '../includes/error-message.php';
             <div class="form-group submit-group">
                 <button type="submit" name="submit"><?php echo isset($event) ? 'Update Event' : 'Create Event'; ?></button>
             </div>
-
         </form>
     </div>
 </section>
+
 
 <!-- Event Management Table -->
 <!-- <section id="event-management" class="event-management-section">
@@ -97,12 +98,12 @@ include '../includes/error-message.php';
                 <?php
                 foreach ($events as $event) {
                     echo '<tr>';
-                    echo '<td>' . htmlspecialchars($event['title']) . '</td>';
-                    echo '<td>' . date('Y-m-d H:i', strtotime($event['event_date'])) . '</td>';
-                    echo '<td>' . htmlspecialchars($event['location']) . '</td>';
+                    echo '<td>' . htmlspecialchars($event[0]['title']) . '</td>';
+                    echo '<td>' . date('Y-m-d H:i', strtotime($event[0]['event_date'])) . '</td>';
+                    echo '<td>' . htmlspecialchars($event[0]['location']) . '</td>';
                     echo '<td>';
-                    echo '<a href="/events/view/' . $event['eventId'] . '" class="btn-view">View</a>';
-                    echo '<a href="/events/delete/' . $event['eventId'] . '" class="btn-delete" onclick="return confirm(\'Are you sure you want to delete this event?\')">Delete</a>';
+                    echo '<a href="/events/view/' . $event[0]['eventId'] . '" class="btn-view">View</a>';
+                    echo '<a href="/events/delete/' . $event[0]['eventId'] . '" class="btn-delete" onclick="return confirm(\'Are you sure you want to delete this event?\')">Delete</a>';
                     echo '</td>';
                     echo '</tr>';
                 }
