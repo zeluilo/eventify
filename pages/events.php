@@ -17,11 +17,11 @@ if (isset($_SESSION['eventCreationSuccess']) && $_SESSION['eventCreationSuccess'
 include '../includes/error-message.php';
 ?>
 
-<section id="home" class="home section dark-background">
+<section id="home" class="home section dark-background" style="background-image: url('<?php echo isset($event) && !empty($event[0]['image']) ? '../images/events/' . htmlspecialchars($event[0]['image']) : ''; ?>');">
     <div class="home-content">
         <h2><?php echo isset($event) ? 'Edit Event' : 'Create Event'; ?></h2>
         <p><?php echo isset($event) ? 'Modify the event details below.' : 'Use the form below to create and publish an event.'; ?></p>
-        <a href="/users/home#events" class="btn-get-started">View Events</a>
+        <a href="/events/view" class="btn-get-started">View Events</a>
     </div>
 </section>
 
@@ -29,7 +29,7 @@ include '../includes/error-message.php';
     <div class="form-container">
         <form action="/events/<?php echo isset($event) ? 'save?=' . $event[0]['eventId'] : 'save'; ?>" method="post" enctype="multipart/form-data" class="php-email-form">
             <h2 class="form-title"><?php echo isset($event) ? 'Edit Event' : 'Create New Event'; ?></h2>
-            <input type="hidden" name="eventId" value="<?php echo isset($event) ? $event[0]['eventId'] : null ?>"/>
+            <input type="hidden" name="eventId" value="<?php echo isset($event) ? $event[0]['eventId'] : null ?>" />
             <div class="form-group">
                 <label for="title">Event Title</label>
                 <input type="text" id="title" name="title" value="<?php echo isset($event) ? htmlspecialchars($event[0]['title']) : ''; ?>" placeholder="Enter Title of Event" required>
@@ -65,7 +65,7 @@ include '../includes/error-message.php';
             <div class="form-group">
                 <label for="image">Event Image</label>
                 <?php if (isset($event) && !empty($event[0]['image'])): ?>
-                    <p>Current Image: <img src="images/events/<?php echo htmlspecialchars($event[0]['image']); ?>" alt="Event Image" width="100"></p>
+                    <p>Current Image: <?php echo $event[0]['image']?></p>
                 <?php endif; ?>
                 <input type="file" id="image" name="image" accept="image/*">
             </div>

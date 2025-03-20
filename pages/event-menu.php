@@ -1,4 +1,17 @@
+<?php if (isset($_SESSION['eventUpdateSuccess']) && $_SESSION['eventUpdateSuccess'] === true) {
+    unset($_SESSION['eventUpdateSuccess']);
+    echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+      <script>
+        Swal.fire({
+            title: 'Event Updated Successfully!',
+            text: 'The event details have been updated.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+      </script>";
+}
 
+?>
 
 <section id="home" class="home section dark-background">
     <div class="home-content">

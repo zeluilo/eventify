@@ -65,7 +65,7 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
                     <?php endif; ?>
                     <div class="dropdown-divider"></div>
                     <li>
-                        <a class="dropdown-item" href="#" onclick="confirmLogout(event)">Logout</a>
+                        <a class="dropdown-item" href="#" onclick="confirmAction(event, '/users/logout', 'logout')">Logout</a>
                     </li>
                 </ul>
         </li>

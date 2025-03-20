@@ -192,7 +192,7 @@ class EventController
             echo '<h5>' . htmlspecialchars($event['title']) . '</h5>';
             echo '<p><strong>Date:</strong> ' . htmlspecialchars(date('F j, Y, g:i a', strtotime($event['event_date']))) . '</p>';
             echo '<p><strong>Location:</strong> ' . htmlspecialchars($event['location']) . '</p>';
-            echo '<a href="/event/view/' . $event['eventId'] . '">View Event</a>';
+            echo '<a href="/events/view?eventId=' . $event['eventId'] . '">View Event</a>';
             echo '</div>';
         }
 
