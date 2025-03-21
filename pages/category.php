@@ -42,13 +42,12 @@ include '../includes/error-message.php';
     <div class="form-container">
         <form action="/category/save" method="post" class="php-email-form">
             <h2 class="form-title">Add New Category</h2>
-
-            <!-- Category ID hidden for update purposes -->
             <input type="hidden" name="categoryId" value="<?php echo $category['categoryId'] ?? ''; ?>">
 
             <div class="form-group">
                 <label for="category_name">Category Name</label>
-                <input type="text" id="category_name" placeholder="Enter Event Category" name="category_name" value="<?php echo $category['category_name'] ?? ''; ?>" required>
+                <input type="text" id="category_name" placeholder="Enter Event Category" 
+                name="category_name" value="<?php echo $category['category_name'] ?? ''; ?>" required>
             </div>
 
             <div class="form-group submit-group">

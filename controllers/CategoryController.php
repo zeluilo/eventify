@@ -27,13 +27,13 @@ class CategoryController
         $message = '';
         if (isset($_POST['submit'])) {
             $category_name = $_POST['category_name'];
-    
+
             // Check if the category is being edited or created
             $categoryId = isset($_POST['categoryId']) ? $_POST['categoryId'] : null;
-            
+
             // Check if the category already exists
             $category_exist = $this->categoryTable->find('category_name', $category_name);
-            
+
             if (!empty($category_exist) && (!$categoryId || $category_exist['category_id'] != $categoryId)) {
                 $message = 'Category exists already';
                 $_SESSION['errorMessage'] = $message;
@@ -45,38 +45,38 @@ class CategoryController
                     'title' => 'Save Category - Eventify',
                 ];
             }
-            
+
             $values = [
                 'category_name' => $category_name,
             ];
-            
+
             // If categoryId exists, it's an edit, else it's a new creation
             if ($categoryId) {
                 // Update existing category
                 $updated = $this->categoryTable->update($values, $categoryId);
-    
+
                 if ($updated) {
+                    $_SESSION['errorMessage'] = 'Failed to update category. Please try again.';
+                } else {
                     $_SESSION['categoryUpdateSuccess'] = true;
                     // header('Location: /events/view');
                     exit;
-                } else {
-                    $_SESSION['errorMessage'] = 'Failed to update category. Please try again.';
                 }
             } else {
                 // Create new category
                 $values['datecreate'] = date('Y-m-d H:i');
                 $inserted = $this->categoryTable->insert($values);
-    
+
                 if ($inserted) {
+                    $_SESSION['errorMessage'] = 'Failed to add category. Please try again.';
+                } else {
                     $_SESSION['categoryCreationSuccess'] = true;
                     header('Location: /category/save');
                     exit;
-                } else {
-                    $_SESSION['errorMessage'] = 'Failed to add category. Please try again.';
                 }
             }
         }
-        
+
         return [
             'template' => 'category.php',
             'variables' => [
@@ -88,15 +88,15 @@ class CategoryController
 
     public function manage(): array
     {
-        $this->checkLogin();
+        // $this->checkLogin();
         $categories = $this->categoryTable->findAll();
 
         return [
-            'template' => 'manageCategory.html.php',
+            'template' => 'category-menu.php',
             'variables' => [
                 'categories' => $categories
             ],
-            'title' => 'List Of Categories'
+            'title' => 'Categories - Eventify'
         ];
     }
 

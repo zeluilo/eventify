@@ -221,7 +221,17 @@ window.onclick = function (event) {
     }
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    const navSections = document.querySelectorAll('.nav-section');
 
+    navSections.forEach(section => {
+      section.querySelector('h3').addEventListener('click', () => {
+        section.classList.toggle('active');
+
+        console.log(`Toggled submenu for: ${section.querySelector('h3').innerText}`);
+      });
+    });
+  });
 
 // ==============================
 // (Optional) Error Modal Handling (If Needed Later)

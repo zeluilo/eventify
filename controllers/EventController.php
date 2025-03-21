@@ -16,6 +16,19 @@ class EventController
         $this->viewEventDetails = $viewEventDetails;
     }
 
+    public function dashboard()
+    {
+
+        $categories = $this->categoryTable->findAll();
+        return [
+            'template' => 'dashboard.php',
+            'variables' => [
+                'categories' => $categories
+            ],
+            'title' => 'Eventify - Admin Dashboard'
+        ];
+    }
+
     public function view()
     {
         if (isset($_GET['eventId']) && !empty($_GET['eventId'])) {
@@ -149,7 +162,7 @@ class EventController
                     $values['datecreate'] = date('Y-m-d H:i');
                     $this->eventTable->insert($values);
                     $_SESSION['eventCreationSuccess'] = true;
-                    header('Location: /events/create');
+                    header('Location: /events/view');
                     exit;
                 }
             }

@@ -60,7 +60,7 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
                     <?php if ($isAdmin) : ?>
                         <div class="dropdown-divider"></div>
                         <li>
-                            <a class="dropdown-item" href="/admin/dashboard">Dashboard</a>
+                            <a class="dropdown-item" href="/events/dashboard">Dashboard</a>
                         </li>
                     <?php endif; ?>
                     <div class="dropdown-divider"></div>

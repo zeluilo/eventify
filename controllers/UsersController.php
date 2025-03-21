@@ -53,6 +53,7 @@ class UsersController
             'title' => 'Eventify - Discover Events'
         ];
     }
+
     public function editUser(): array
     {
         $userId = isset($_GET['userId']) ? $_GET['userId'] : null;
