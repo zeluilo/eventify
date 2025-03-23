@@ -20,6 +20,7 @@ class EventController
     {
 
         $categories = $this->categoryTable->findAll();
+        $events = $this->eventTable->findAll();
         return [
             'template' => 'dashboard.php',
             'variables' => [

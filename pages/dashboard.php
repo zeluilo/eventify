@@ -23,21 +23,34 @@
     </ul>
   </aside>
 
+  <!-- PHP Includes for Menu Sections -->
   <?php include 'category-menu.php'; ?>  
-  <?php include 'event-menu.php'; ?>  
+  <?php include 'admin/event-menu.php'; ?>  
   <?php include 'account-menu.php'; ?>  
 </div>
 
 <script>
   // Show the selected menu based on the provided type
   function showMenu(type) {
+    console.log('Selected menu:', type); // Debugging line to check selected menu
+
     // Hide all menus
     const menus = ['category', 'event', 'account'];
     menus.forEach(menu => {
-      document.getElementById(menu + "-menu").style.display = "none";
+      const menuElement = document.getElementById(menu + "-menu");
+      if (menuElement) {
+        menuElement.style.display = "none";
+        console.log('Hiding menu:', menu); // Debugging line to verify hiding
+      }
     });
 
     // Display the selected menu
-    document.getElementById(type + "-menu").style.display = "block";
+    const selectedMenu = document.getElementById(type + "-menu");
+    if (selectedMenu) {
+      selectedMenu.style.display = "block";
+      console.log('Showing menu:', type); // Debugging line to verify showing
+    } else {
+      console.error('Menu not found:', type + "-menu"); // Debugging line to catch any errors
+    }
   }
 </script>

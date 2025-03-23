@@ -1,4 +1,4 @@
-<main id="category-menu" class="main-container" style="display: none;">
+<main id="category-menu" class="main-container" style="display: block;">
   <div class="main-title">
     <h2>Categories</h2>
   </div>
@@ -39,55 +39,51 @@
 
   </div>
 
-  <div class="products">
-
-    <div class="product-card">
-      <h2 class="product-description">Latest Updates</h2>
-      <p class="text-secondary">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce laoreet facilisis nulla, consectetur pulvinar diam. Aliquam tempus vel quam.
-      </p>
-      <button type="button" class="product-button">
-        <span class="material-icons-outlined">add</span>
+  <div class="data-section">
+    <div class="table-header">
+      <h2>Category List</h2>
+      <button class="action-btn add-btn">
+        <span class="material-icons-outlined">add</span> Add New Category
       </button>
     </div>
 
-    <div class="social-media">
-      <div class="product">
-
-        <div>
-          <div class="product-icon background-red">
-            <i class="bi bi-twitter"></i>
-          </div>
-          <h1 class="text-red">+274</h1>
-          <p class="text-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
-
-        <div>
-          <div class="product-icon background-green">
-            <i class="bi bi-instagram"></i>
-          </div>
-          <h1 class="text-green">+352</h1>
-          <p class="text-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
-
-        <div>
-          <div class="product-icon background-orange">
-            <i class="bi bi-facebook"></i>
-          </div>
-          <h1 class="text-orange">-126</h1>
-          <p class="text-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
-
-        <div>
-          <div class="product-icon background-blue">
-            <i class="bi bi-linkedin"></i>
-          </div>
-          <h1 class="text-blue">+102</h1>
-          <p class="text-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
-
-      </div>
-    </div>
-
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Category Name</th>
+          <th>Date Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Sample Data Row (Replace with dynamic PHP later) -->
+        <tr>
+          <td>1</td>
+          <td>Music Events</td>
+          <td>2025-03-21 11:00 AM</td>
+          <td>
+            <button class="edit-btn"><span class="material-icons-outlined">edit</span></button>
+            <button class="delete-btn"><span class="material-icons-outlined">delete</span></button>
+          </td>
+        </tr>
+        <?php foreach ($categories as $category): ?>
+          <tr>
+            <td> <?= htmlspecialchars($category['category_name']) ?> </td>
+            <td>2025-03-21 11:00 AM</td>
+            <td>
+              <button class="edit-btn"><span class="material-icons-outlined">edit</span></button>
+              <button class="delete-btn"><span class="material-icons-outlined">delete</span></button>
+            </td>
+          </tr>
+          <li>
+            <a href="#" class="category-link" data-category="<?= htmlspecialchars($category['categoryId']) ?>">
+              <?= htmlspecialchars($category['category_name']) ?>
+            </a>
+          </li>
+          <div class="dropdown-divider"></div>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
   </div>
 </main>
