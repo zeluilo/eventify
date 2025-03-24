@@ -8,7 +8,7 @@
             <h2>Event List</h2>
             <div class="table-header-right">
                 <div class="search-bar">
-                    <input type="text" name="search" id="searchInput" placeholder="Search events...">
+                    <input type="text" name="search" id="searchAdmin" placeholder="Search events...">
                 </div>
                 <a class="action-btn add-btn" href="/events/save">
                     <span class="material-icons-outlined">add</span> Add New event
@@ -16,8 +16,8 @@
             </div>
         </div>
 
-        <table class="data-table">
-            <thead>
+        <table id="eventTable" class="data-table">
+        <thead>
                 <tr>
                     <th>Title</th>
                     <th>Location</th>
@@ -40,7 +40,7 @@
                         <td> <?= htmlspecialchars($event['email']) ?> </td>
                         <td> <?= htmlspecialchars($event['role']) ?> </td>
                         <td>
-                            <button class="edit-btn"><span class="material-icons-outlined">edit</span></button>
+                            <a class="edit-btn"><span class="material-icons-outlined">edit</span></a>
                             <button class="delete-btn"><span class="material-icons-outlined">delete</span></button>
                         </td>
                     </tr>

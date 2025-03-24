@@ -40,12 +40,11 @@
   </div> -->
 
   <div class="data-section">
-  <div class="data-section">
     <div class="table-header">
       <h2>Category List</h2>
       <div class="table-header-right">
         <div class="search-bar">
-          <input type="text" name="search" id="searchInput" placeholder="Search category...">
+          <input type="text" name="search" id="searchAdmin" placeholder="Search category...">
         </div>
         <a class="action-btn add-btn" href="/events/save">
           <span class="material-icons-outlined">add</span> Add New Category
@@ -53,8 +52,8 @@
       </div>
     </div>
 
-    <table class="data-table">
-      <thead>
+    <table id="categoryTable" class="data-table">
+    <thead>
         <tr>
           <th>Category Name</th>
           <th>Date Created</th>
@@ -62,6 +61,11 @@
         </tr>
       </thead>
       <tbody>
+        <?php if (empty($categories)): ?>
+          <tr>
+            <td colspan="8">No category found.</td>
+          </tr>
+        <?php endif; ?>
         <?php foreach ($categories as $category): ?>
           <tr>
             <td> <?= htmlspecialchars($category['category_name']) ?> </td>

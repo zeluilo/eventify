@@ -8,11 +8,14 @@ class EventController
     private $categoryTable;
     private $eventTable;
     private $viewEventDetails;
+    private $userTable;
 
-    public function __construct($categoryTable, $eventTable, $viewEventDetails)
+
+    public function __construct($categoryTable, $eventTable, $userTable, $viewEventDetails)
     {
         $this->categoryTable = $categoryTable;
         $this->eventTable = $eventTable;
+        $this->userTable = $userTable;
         $this->viewEventDetails = $viewEventDetails;
     }
 
@@ -21,12 +24,14 @@ class EventController
 
         $categories = $this->categoryTable->findAll();
         $events = $this->viewEventDetails->findAll();
+        $users = $this->userTable->find('user_role', 'USER');
+
         return [
             'template' => 'dashboard.php',
             'variables' => [
                 'categories' => $categories,
-                'events' => $events
-
+                'events' => $events,
+                'users' => $users
             ],
             'title' => 'Eventify - Admin Dashboard'
         ];
@@ -239,4 +244,27 @@ class EventController
         exit;
     }
 
+    public function search()
+    {
+        $search = $_POST['search'] ?? '';
+    
+        $events = [];
+        $categories = [];
+        $users = [];
+    
+        // Search query execution for events, categories, and users
+        if (!empty($search)) {
+            $events = $this->viewEventDetails->searchEvents($search);
+            $categories = $this->categoryTable->searchCategory($search);
+            $users = $this->userTable->searchUsers($search);
+        } else {
+            $categories = $this->categoryTable->findAll();
+            $events = $this->viewEventDetails->findAll();
+            $users = $this->userTable->find('user_role', 'USER');
+        }
+    
+        // Pass the results to the view
+        // Assuming you're using a templating system like PHP's require() or a framework's rendering function
+        // require 'views/admin.php';  // Make sure you include the necessary template
+    }
 }
