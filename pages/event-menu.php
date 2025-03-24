@@ -47,7 +47,7 @@ include '../includes/error-message.php';
                 <ul id="categoryList">
                     <?php foreach ($categories as $category): ?>
                         <li>
-                            <a href="#" class="category-link" data-category="<?= htmlspecialchars($category['categoryId']) ?>">
+                            <a href="#" class="category-link" data-category="<?= htmlspecialchars($category['category_name']) ?>">
                                 <?= htmlspecialchars($category['category_name']) ?>
                             </a>
                         </li>

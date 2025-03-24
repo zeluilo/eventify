@@ -51,9 +51,9 @@ class EventController
                 'title' => 'View Event - Eventify'
             ];
         } else {
-            $events = $this->eventTable->findAll();
+            $events = $this->viewEventDetails->findAll();
             $categories = $this->categoryTable->findAll();
-    
+
             return [
                 'template' => 'event-menu.php',
                 'variables' => [
@@ -70,7 +70,7 @@ class EventController
             $eventId = $_GET['eventId'];
             $event = $this->viewEventDetails->find('eventId', $eventId);
             $categories = $this->categoryTable->findAll();
-    
+
             // If the event is found, return the event data and categories as JSON
             if ($event) {
                 echo json_encode([
@@ -100,29 +100,29 @@ class EventController
         $events = $this->eventTable->findAll();
         $currentDateTime = date('Y-m-d\TH:i');
         $message = '';
-    
+
         $eventId = $_POST['eventId'] ?? ($_GET['eventId'] ?? null);
         $isUpdate = !empty($eventId);
         $existingEvent = $isUpdate ? $this->eventTable->find('eventId', $eventId)[0] : null;
         $existingImage = $existingEvent['image'] ?? null;
-    
+
         $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp'];
         $uploadDir = "images/events/";
-    
+
         // Create directory if not exists
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0775, true);
         }
-    
+
         // Handle form submission
         if (isset($_POST['submit'])) {
             $imageName = $existingImage;
             $uploadValid = true;
-    
+
             if (isset($_FILES['image']) && $_FILES['image']['name'] !== "") {
                 $targetPath = $uploadDir . basename($_FILES['image']['name']);
                 $fileExtension = strtolower(pathinfo($targetPath, PATHINFO_EXTENSION));
-    
+
                 // Validate extension
                 if (!in_array($fileExtension, $allowedExtensions)) {
                     $message = 'Invalid file format. Please choose a valid image.';
@@ -147,7 +147,7 @@ class EventController
                     }
                 }
             }
-    
+
             if ($uploadValid) {
                 $values = [
                     'title' => $_POST['title'],
@@ -158,7 +158,7 @@ class EventController
                     'image' => $imageName,
                     'userId' => $_SESSION['userDetails']["userId"]
                 ];
-    
+
                 if ($isUpdate) {
                     $values['eventId'] = $eventId;
                     $values['dateupdate'] = date('Y-m-d H:i');
@@ -175,9 +175,9 @@ class EventController
                 }
             }
         }
-    
+
         $event = $isUpdate ? [$existingEvent] : null;
-    
+
         return [
             'template' => 'events.php',
             'variables' => [
@@ -189,7 +189,7 @@ class EventController
             ],
             'title' => $isUpdate ? 'Edit Event - Eventify' : 'Create Event - Eventify'
         ];
-    } 
+    }
     public function delete(): array
     {
         $message = '';
@@ -213,7 +213,7 @@ class EventController
         header('location: /events/view');
         exit();
     }
-    
+
     public function filter()
     {
         $search = $_POST['search'] ?? '';
@@ -222,11 +222,11 @@ class EventController
         $events = [];
 
         if (!empty($search)) {
-            $events = $this->eventTable->searchEvents($search);
+            $events = $this->viewEventDetails->searchEvents($search);
         } elseif (!empty($category)) {
-            $events = $this->eventTable->searchCategory($category);
+            $events = $this->viewEventDetails->searchCategory($category);
         } else {
-            $events = $this->eventTable->findAll();
+            $events = $this->viewEventDetails->findAll();
         }
 
         foreach ($events as $event) {
@@ -243,28 +243,44 @@ class EventController
         }
         exit;
     }
-
     public function search()
     {
-        $search = $_POST['search'] ?? '';
+        $search = $_POST['search'] ?? '';  // Get the search term
     
+        // Initialize empty arrays for storing search results
         $events = [];
         $categories = [];
         $users = [];
     
-        // Search query execution for events, categories, and users
+        // Search logic for events, categories, and users
         if (!empty($search)) {
-            $events = $this->viewEventDetails->searchEvents($search);
+            // Search for events, categories, and users if search term is provided
+            $events = $this->eventTable->searchEvents($search);
             $categories = $this->categoryTable->searchCategory($search);
             $users = $this->userTable->searchUsers($search);
         } else {
+            // If no search term is provided, return all records
+            $events = $this->eventTable->findAll();
             $categories = $this->categoryTable->findAll();
-            $events = $this->viewEventDetails->findAll();
-            $users = $this->userTable->find('user_role', 'USER');
+            $users = $this->userTable->find('user_role', 'USER');  // Adjust the criteria as needed
         }
     
-        // Pass the results to the view
-        // Assuming you're using a templating system like PHP's require() or a framework's rendering function
-        // require 'views/admin.php';  // Make sure you include the necessary template
+        // Output categories as HTML rows for the frontend
+        foreach ($categories as $category) {
+            echo '<tr>';
+            echo '<td>' . htmlspecialchars($category['category_name']) . '</td>';
+            echo '<td>' . htmlspecialchars($category['datecreate']) . '</td>';
+            echo '<td>
+                    <button class="edit-btn"><span class="material-icons-outlined">edit</span></button>
+                    <button class="delete-btn"><span class="material-icons-outlined">delete</span></button>
+                  </td>';
+            echo '</tr>';
+        }
+
+        if (empty($categories)) {
+            echo "<p>No categories found.</p>";
+        }
+        exit;
     }
+    
 }

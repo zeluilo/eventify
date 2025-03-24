@@ -167,60 +167,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-function openEditModal(eventId) {
-    // Log the eventId to the console for debugging
-    console.log("Event ID:", eventId);
-
-    // Make an AJAX request to fetch event details by eventId
-    fetch(`/events/fetchEventDetails?eventId=${eventId}`)
-        .then(response => response.json()) // Parse the response as JSON
-        .then(data => {
-            if (data.success) {
-                // Populate the modal form with the fetched event data
-                document.getElementById('editEventId').value = data.eventId;
-                document.getElementById('title').value = data.title;
-                document.getElementById('description').value = data.description;
-                document.getElementById('event_date').value = data.event_date;
-                document.getElementById('location').value = data.location;
-
-                // Populate the category dropdown dynamically
-                const categorySelect = document.getElementById('category_name');
-                categorySelect.innerHTML = ''; // Clear existing categories
-                data.categories.forEach(function (category) {
-                    const option = document.createElement('option');
-                    option.value = category.id;
-                    option.textContent = category.name;
-                    if (category.id === data.categoryId) {
-                        option.selected = true; // Set the current category as selected
-                    }
-                    categorySelect.appendChild(option);
-                });
-
-                // Show the modal
-                document.getElementById('editEventModal').style.display = "block";
-            } else {
-                console.error("Failed to fetch event details:", data.message);
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching event details:", error);
-        });
-}
-
-
-
-// Function to close the Edit Event Modal
-function closeEditModal() {
-    document.getElementById('editEventModal').style.display = "none";
-}
-
-// Optional: Close modal when clicking outside of the modal
-window.onclick = function (event) {
-    if (event.target == document.getElementById('editEventModal')) {
-        closeEditModal();
-    }
-}
-
 document.addEventListener("DOMContentLoaded", function () {
     const navSections = document.querySelectorAll('.nav-section');
 

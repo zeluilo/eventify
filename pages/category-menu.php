@@ -41,42 +41,43 @@
 
   <div class="data-section">
     <div class="table-header">
-      <h2>Category List</h2>
-      <div class="table-header-right">
-        <div class="search-bar">
-          <input type="text" name="search" id="searchAdmin" placeholder="Search category...">
+        <h2>Category List</h2>
+        <div class="table-header-right">
+            <div class="search-bar">
+                <input type="text" name="search" id="searchAdmin" placeholder="Search category..." oninput="searchCategories()">
+            </div>
+            <a class="action-btn add-btn" href="/events/save">
+                <span class="material-icons-outlined">add</span> Add New Category
+            </a>
         </div>
-        <a class="action-btn add-btn" href="/events/save">
-          <span class="material-icons-outlined">add</span> Add New Category
-        </a>
-      </div>
     </div>
 
-    <table id="categoryTable" class="data-table">
-    <thead>
-        <tr>
-          <th>Category Name</th>
-          <th>Date Created</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php if (empty($categories)): ?>
-          <tr>
-            <td colspan="8">No category found.</td>
-          </tr>
-        <?php endif; ?>
-        <?php foreach ($categories as $category): ?>
-          <tr>
-            <td> <?= htmlspecialchars($category['category_name']) ?> </td>
-            <td> <?= htmlspecialchars($category['datecreate']) ?> </td>
-            <td>
-              <button class="edit-btn"><span class="material-icons-outlined">edit</span></button>
-              <button class="delete-btn"><span class="material-icons-outlined">delete</span></button>
-            </td>
-          </tr>
-        <?php endforeach; ?>
-      </tbody>
+    <table  class="data-table">
+        <thead>
+            <tr>
+                <th>Category Name</th>
+                <th>Date Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="categoryResults">
+            <?php if (empty($categories)): ?>
+                <tr>
+                    <td colspan="3">No category found.</td>
+                </tr>
+            <?php endif; ?>
+            <?php foreach ($categories as $category): ?>
+                <tr>
+                    <td><?= htmlspecialchars($category['category_name']) ?></td>
+                    <td><?= htmlspecialchars($category['datecreate']) ?></td>
+                    <td>
+                        <button class="edit-btn"><span class="material-icons-outlined">edit</span></button>
+                        <button class="delete-btn"><span class="material-icons-outlined">delete</span></button>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
     </table>
-  </div>
+</div>
+
 </main>

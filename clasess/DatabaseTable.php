@@ -94,24 +94,27 @@ class DatabaseTable
 	public function search($columns = [], $searchTerm = '', $additionalCondition = '')
 	{
 		if (empty($columns)) return [];
-
+	
 		$searchTerm = '%' . $searchTerm . '%';
 		$likeClauses = [];
-
+	
+		// Loop through columns and build LIKE clauses for each
 		foreach ($columns as $column) {
 			$likeClauses[] = "{$column} LIKE :searchTerm";
 		}
-
+	
 		$whereClause = implode(' OR ', $likeClauses);
+	
 		if (!empty($additionalCondition)) {
 			$whereClause = "($whereClause) AND {$additionalCondition}";
 		}
-
+	
+		// Build the SQL query with the dynamic where clauses
 		$sql = "SELECT * FROM {$this->table} WHERE {$whereClause}";
 		$stmt = $this->pdo->prepare($sql);
 		$stmt->bindValue(':searchTerm', $searchTerm, PDO::PARAM_STR);
 		$stmt->execute();
-
+	
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
 
@@ -122,7 +125,7 @@ class DatabaseTable
 
 	public function searchCategory($searchTerm)
 	{
-		return $this->search(['categoryId'], $searchTerm);
+		return $this->search(['category_name'], $searchTerm);
 	}
 
 	public function searchUsers($searchTerm)

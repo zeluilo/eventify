@@ -24,15 +24,21 @@
   </aside>
 
   <!-- PHP Includes for Menu Sections -->
-  <?php include 'category-menu.php'; ?>  
-  <?php include 'admin/event-menu.php'; ?>  
-  <?php include 'account-menu.php'; ?>  
+  <?php include 'category-menu.php'; ?>
+  <?php include 'admin/event-menu.php'; ?>
+  <?php include 'account-menu.php'; ?>
 </div>
 
 <script>
-  // Show the selected menu based on the provided type
+  let pageVariable = " "; // Set the default page to category
+
+  // This function will set the page type based on the selected menu
   function showMenu(type) {
     console.log('Selected menu:', type); // Debugging line to check selected menu
+
+    // Set the pageVariable based on the selected menu
+    pageVariable = type;
+    console.log('Page type set to:', pageVariable); // Debugging line to verify the page type
 
     // Hide all menus
     const menus = ['category', 'event', 'account'];
@@ -48,37 +54,49 @@
     const selectedMenu = document.getElementById(type + "-menu");
     if (selectedMenu) {
       selectedMenu.style.display = "block";
-      console.log('Showing menu:', type); // Debugging line to verify showing
+      console.log('Showing menu:', type);
     } else {
       console.error('Menu not found:', type + "-menu"); // Debugging line to catch any errors
     }
   }
 
-  document.getElementById("searchAdmin").addEventListener("input", function() {
-    let searchQuery = this.value.toLowerCase();
+  function searchCategories() {
+    var searchTerm = document.getElementById('searchAdmin').value;
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/events/search', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            document.getElementById('categoryResults').innerHTML = xhr.responseText;
+        }
+    };
+    xhr.send('search=' + encodeURIComponent(searchTerm));
+}
 
-    // Determine the current page and the corresponding table
-    let table;
-    if (window.location.pathname.includes("category")) {
-        table = document.getElementById("categoryTable");
-    } else if (window.location.pathname.includes("event")) {
-        table = document.getElementById("eventTable");
-    } else if (window.location.pathname.includes("user")) {
-        table = document.getElementById("userTable");
-    }
+function searchUsers() {
+    var searchTerm = document.getElementById('searchAdmin').value;
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/events/search', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            document.getElementById('categoryResults').innerHTML = xhr.responseText;
+        }
+    };
+    xhr.send('search=' + encodeURIComponent(searchTerm));
+}
 
-    if (table) {
-        let rows = table.querySelectorAll("tbody tr");
-
-        rows.forEach(row => {
-            let rowText = row.textContent.toLowerCase();
-            if (rowText.includes(searchQuery)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
-    }
-});
+function searchEvents() {
+    var searchTerm = document.getElementById('searchAdmin').value;
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/events/search', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            document.getElementById('categoryResults').innerHTML = xhr.responseText;
+        }
+    };
+    xhr.send('search=' + encodeURIComponent(searchTerm));
+}
 
 </script>
