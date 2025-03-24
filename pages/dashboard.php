@@ -53,4 +53,32 @@
       console.error('Menu not found:', type + "-menu"); // Debugging line to catch any errors
     }
   }
+
+  document.getElementById("searchAdmin").addEventListener("input", function() {
+    let searchQuery = this.value.toLowerCase();
+
+    // Determine the current page and the corresponding table
+    let table;
+    if (window.location.pathname.includes("category")) {
+        table = document.getElementById("categoryTable");
+    } else if (window.location.pathname.includes("event")) {
+        table = document.getElementById("eventTable");
+    } else if (window.location.pathname.includes("user")) {
+        table = document.getElementById("userTable");
+    }
+
+    if (table) {
+        let rows = table.querySelectorAll("tbody tr");
+
+        rows.forEach(row => {
+            let rowText = row.textContent.toLowerCase();
+            if (rowText.includes(searchQuery)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+});
+
 </script>
