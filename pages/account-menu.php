@@ -1,93 +1,50 @@
 <main id="account-menu" class="main-container" style="display: none;">
-  <div class="main-title">
-    <h2>Accounts</h2>
-  </div>
+  <!-- <div class="main-title">
+        <h2>Events</h2>
+    </div> -->
 
-  <div class="main-cards">
-
-    <div class="card">
-      <div class="card-inner">
-        <h2>LIKES</h2>
-        <span class="material-icons-outlined">thumb_up</span>
-      </div>
-      <h1>4,021</h1>
-    </div>
-
-    <div class="card">
-      <div class="card-inner">
-        <h2>SUBSCRIBERS</h2>
-        <span class="material-icons-outlined">subscriptions</span>
-      </div>
-      <h1>8,731</h1>
-    </div>
-
-    <div class="card">
-      <div class="card-inner">
-        <h2>FOLLOWERS</h2>
-        <span class="material-icons-outlined">groups</span>
-      </div>
-      <h1>3,841</h1>
-    </div>
-
-    <div class="card">
-      <div class="card-inner">
-        <h2>MESSAGES</h2>
-        <span class="material-icons-outlined">forum</span>
-      </div>
-      <h1>1,962</h1>
-    </div>
-
-  </div>
-
-  <div class="products">
-
-    <div class="product-card">
-      <h2 class="product-description">Latest Updates</h2>
-      <p class="text-secondary">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce laoreet facilisis nulla, consectetur pulvinar diam. Aliquam tempus vel quam.
-      </p>
-      <button type="button" class="product-button">
-        <span class="material-icons-outlined">add</span>
-      </button>
-    </div>
-
-    <div class="social-media">
-      <div class="product">
-
-        <div>
-          <div class="product-icon background-red">
-            <i class="bi bi-twitter"></i>
-          </div>
-          <h1 class="text-red">+274</h1>
-          <p class="text-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+  <div class="data-section">
+    <div class="table-header">
+      <h2>Staff List</h2>
+      <div class="table-header-right">
+        <div class="search-bar">
+          <input type="text" name="search" id="searchInput" placeholder="Search staff...">
         </div>
-
-        <div>
-          <div class="product-icon background-green">
-            <i class="bi bi-instagram"></i>
-          </div>
-          <h1 class="text-green">+352</h1>
-          <p class="text-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
-
-        <div>
-          <div class="product-icon background-orange">
-            <i class="bi bi-facebook"></i>
-          </div>
-          <h1 class="text-orange">-126</h1>
-          <p class="text-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
-
-        <div>
-          <div class="product-icon background-blue">
-            <i class="bi bi-linkedin"></i>
-          </div>
-          <h1 class="text-blue">+102</h1>
-          <p class="text-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
-
+        <a class="action-btn add-btn" href="/events/save">
+          <span class="material-icons-outlined">add</span> Add New Staff
+        </a>
       </div>
     </div>
 
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Full name</th>
+          <th>Email</th>
+          <th>Phone number</th>
+          <th>Staff Role</th>
+          <th>Created at</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($events as $event): ?>
+          <tr>
+            <td> <?= htmlspecialchars($event['first_name'] . " " . $event['last_name']) ?> </td>
+            <td> <?= htmlspecialchars(string: $event['email']) ?> </td>
+            <td> <?= htmlspecialchars(string: $event['phone']) ?> </td>
+            <td> <?= htmlspecialchars($event['role']) ?> </td>
+            <td> <?= htmlspecialchars($event['user_created']) ?> </td>
+
+            <td>
+              <button class="edit-btn"><span class="material-icons-outlined">edit</span></button>
+              <button class="delete-btn"><span class="material-icons-outlined">delete</span></button>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+        <!-- More rows dynamically -->
+      </tbody>
+    </table>
   </div>
 </main>

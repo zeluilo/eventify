@@ -20,11 +20,13 @@ class EventController
     {
 
         $categories = $this->categoryTable->findAll();
-        $events = $this->eventTable->findAll();
+        $events = $this->viewEventDetails->findAll();
         return [
             'template' => 'dashboard.php',
             'variables' => [
-                'categories' => $categories
+                'categories' => $categories,
+                'events' => $events
+
             ],
             'title' => 'Eventify - Admin Dashboard'
         ];
