@@ -30,7 +30,7 @@
 </div>
 
 <script>
-  let pageVariable = " "; // Set the default page to category
+  let pageVariable = "category"; // Set the default page to category
 
   // This function will set the page type based on the selected menu
   function showMenu(type) {
@@ -60,43 +60,113 @@
     }
   }
 
-  function searchCategories() {
-    var searchTerm = document.getElementById('searchAdmin').value;
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/events/search', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            document.getElementById('categoryResults').innerHTML = xhr.responseText;
-        }
-    };
-    xhr.send('search=' + encodeURIComponent(searchTerm));
-}
 
-function searchUsers() {
-    var searchTerm = document.getElementById('searchAdmin').value;
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/events/search', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            document.getElementById('categoryResults').innerHTML = xhr.responseText;
-        }
-    };
-    xhr.send('search=' + encodeURIComponent(searchTerm));
-}
+  document.querySelectorAll('.searchInput').forEach(input => {
+    input.addEventListener('keyup', function() {
+      var searchTerm = this.value.trim();
+      var searchType = this.getAttribute('data-type');
 
-function searchEvents() {
-    var searchTerm = document.getElementById('searchAdmin').value;
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/events/search', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            document.getElementById('categoryResults').innerHTML = xhr.responseText;
-        }
-    };
-    xhr.send('search=' + encodeURIComponent(searchTerm));
-}
+      console.log(`Searching ${searchType}:`, searchTerm);
 
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/events/search', true);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          var response = JSON.parse(xhr.responseText);
+
+          // Log the entire response to inspect its structure
+          console.log(response);
+
+          // Determine which part of the response to use based on searchType
+          var data = [];
+          if (searchType === 'category') {
+            data = response.categories || []; // Default to empty array if categories are not found
+          } else if (searchType === 'event') {
+            data = response.events || [];
+          } else if (searchType === 'account') {
+            data = response.users || [];
+          }
+
+          // Ensure the data is an array and contains results
+          if (!Array.isArray(data) || data.length === 0) {
+            console.log(`No results found for ${searchType}.`);
+            return;
+          }
+
+          // Determine which table to update based on searchType
+          var resultTableId = searchType === 'category' ? 'categoryResults' :
+            searchType === 'event' ? 'eventResults' :
+            'userResults'; // Default to account users
+
+          updateTable(resultTableId, data);
+        }
+      };
+
+      xhr.send(`search=${encodeURIComponent(searchTerm || '')}&type=${searchType}`);
+    });
+  });
+
+  function updateTable(elementId, data) {
+    console.log(`Updating table: ${elementId} with data:`, data);
+
+    var tableBody = document.getElementById(elementId);
+    if (!tableBody) {
+      console.error(`Element with ID ${elementId} not found.`);
+      return;
+    }
+
+    tableBody.innerHTML = '';
+
+    // Check if data is valid (an array) and has items
+    if (!Array.isArray(data) || data.length === 0) {
+      console.log(`No results found for ${elementId}.`);
+      tableBody.innerHTML = '<tr><td colspan="6">No results found.</td></tr>';
+      return;
+    }
+
+    // Example for user fields, adjust for categories or events
+    const fields = elementId === 'userResults' ? ['userId', 'first_name', 'last_name', 'email', 'phone', 'user_role', 'datecreated'] :
+      elementId === 'categoryResults' ? ['category_name', 'datecreate'] : ['event_name', 'event_date'];
+
+    data.forEach(item => {
+      var row = '<tr>';
+
+      // For users, let's join 'first_name' and 'last_name' into 'full_name'
+      if (elementId === 'userResults') {
+        var fullName = item.first_name + ' ' + item.last_name; // Combine first and last name
+        row += '<td>' + fullName + '</td>'; // Add full name in place of separate first and last names
+        row += '<td>' + item.email + '</td>';
+        row += '<td>' + item.phone + '</td>';
+        row += '<td>' + item.user_role + '</td>';
+        row += '<td>' + item.datecreated + '</td>';
+      }
+
+      // For categories, you might want to format the category name and date created
+      else if (elementId === 'categoryResults') {
+        row += '<td>' + item.category_name + '</td>';
+        row += '<td>' + item.datecreate.toLocaleDateString() + '</td>'; // Format date as needed
+      }
+
+      // For events, join multiple fields or format data as needed
+      else if (elementId === 'eventResults') {
+        row += '<td>' + item.event_name + '</td>';
+        row += '<td>' + new Date(item.event_date).toLocaleDateString() + '</td>'; // Format date as needed
+      }
+
+      row += `
+    <td>
+      <button class="edit-btn"><span class="material-icons-outlined">edit</span></button>
+      <button class="delete-btn"><span class="material-icons-outlined">delete</span></button>
+    </td>
+  `;
+
+      row += '</tr>';
+      tableBody.innerHTML += row;
+    });
+
+    console.log(`Table ${elementId} updated successfully.`);
+
+  }
 </script>

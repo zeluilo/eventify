@@ -8,7 +8,7 @@
       <h2>Staff List</h2>
       <div class="table-header-right">
         <div class="search-bar">
-          <input type="text" name="search" id="searchAdmin" placeholder="Search staff...">
+          <input type="text" name="search" class="searchInput" data-type="account" placeholder="Search staff...">
         </div>
         <a class="action-btn add-btn" href="/users/save">
           <span class="material-icons-outlined">add</span> Add New Staff
@@ -17,8 +17,8 @@
     </div>
 
 
-    <table id="userTable" class="data-table">
-    <thead>
+    <table class="data-table">
+      <thead>
         <tr>
           <th>Full name</th>
           <th>Email</th>
@@ -28,7 +28,7 @@
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="userResults">
         <?php foreach ($users as $user): ?>
           <tr>
             <td> <?= htmlspecialchars($user['first_name'] . " " . $user['last_name']) ?> </td>
@@ -43,7 +43,6 @@
             </td>
           </tr>
         <?php endforeach; ?>
-        <!-- More rows dynamically -->
       </tbody>
     </table>
   </div>

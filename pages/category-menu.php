@@ -44,7 +44,7 @@
         <h2>Category List</h2>
         <div class="table-header-right">
             <div class="search-bar">
-                <input type="text" name="search" id="searchAdmin" placeholder="Search category..." oninput="searchCategories()">
+                <input type="text" name="search" class="searchInput" data-type="category" placeholder="Search category...">
             </div>
             <a class="action-btn add-btn" href="/events/save">
                 <span class="material-icons-outlined">add</span> Add New Category
@@ -61,11 +61,6 @@
             </tr>
         </thead>
         <tbody id="categoryResults">
-            <?php if (empty($categories)): ?>
-                <tr>
-                    <td colspan="3">No category found.</td>
-                </tr>
-            <?php endif; ?>
             <?php foreach ($categories as $category): ?>
                 <tr>
                     <td><?= htmlspecialchars($category['category_name']) ?></td>

@@ -245,42 +245,29 @@ class EventController
     }
     public function search()
     {
-        $search = $_POST['search'] ?? '';  // Get the search term
+        $search = $_POST['search'] ?? '';  
     
-        // Initialize empty arrays for storing search results
-        $events = [];
-        $categories = [];
-        $users = [];
+        $results = [
+            'events' => [],
+            'categories' => [],
+            'users' => []
+        ];
     
-        // Search logic for events, categories, and users
         if (!empty($search)) {
-            // Search for events, categories, and users if search term is provided
-            $events = $this->eventTable->searchEvents($search);
-            $categories = $this->categoryTable->searchCategory($search);
-            $users = $this->userTable->searchUsers($search);
+            $results['events'] = $this->eventTable->searchEvents($search);
+            $results['categories'] = $this->categoryTable->searchCategory($search);
+            $results['users'] = $this->userTable->searchUsers($search);
         } else {
-            // If no search term is provided, return all records
-            $events = $this->eventTable->findAll();
-            $categories = $this->categoryTable->findAll();
-            $users = $this->userTable->find('user_role', 'USER');  // Adjust the criteria as needed
+            $results['events'] = $this->eventTable->findAll();
+            $results['categories'] = $this->categoryTable->findAll();
+            $results['users'] = $this->userTable->find('user_role', 'USER');
         }
     
-        // Output categories as HTML rows for the frontend
-        foreach ($categories as $category) {
-            echo '<tr>';
-            echo '<td>' . htmlspecialchars($category['category_name']) . '</td>';
-            echo '<td>' . htmlspecialchars($category['datecreate']) . '</td>';
-            echo '<td>
-                    <button class="edit-btn"><span class="material-icons-outlined">edit</span></button>
-                    <button class="delete-btn"><span class="material-icons-outlined">delete</span></button>
-                  </td>';
-            echo '</tr>';
-        }
-
-        if (empty($categories)) {
-            echo "<p>No categories found.</p>";
-        }
+        // Return JSON response
+        header('Content-Type: application/json');
+        echo json_encode($results);
         exit;
     }
+    
     
 }

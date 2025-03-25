@@ -29,8 +29,8 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php foreach ($events as $event): ?>
+            <tbody id="eventResults">
+            <?php foreach ($events as $event): ?>
                     <tr>
                         <td> <?= htmlspecialchars($event['title']) ?> </td>
                         <td> <?= htmlspecialchars($event['location']) ?> </td>
