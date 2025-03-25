@@ -1,17 +1,4 @@
 <?php
-// Show success message after event creation
-if (isset($_SESSION['eventCreationSuccess']) && $_SESSION['eventCreationSuccess'] === true) {
-    unset($_SESSION['eventCreationSuccess']);
-    echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
-      <script>
-        Swal.fire({
-            title: 'Event Created Successfully!',
-            text: 'Your event has been saved and can now be viewed by others.',
-            icon: 'success',
-            confirmButtonText: 'OK'
-        });
-      </script>";
-}
 
 // Include error messages
 include '../includes/error-message.php';

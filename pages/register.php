@@ -1,21 +1,5 @@
 <?php
-if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess'] === true) {
 
-    unset($_SESSION['registrationSuccess']);
-    echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
-          <script>
-            Swal.fire({
-                title: 'Registration Successful!',
-                text: 'You can now log in with your credentials.',
-                icon: 'success',
-                confirmButtonText: 'Go to Login'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/users/login'; // Redirect to login page
-                }
-            });
-          </script>";
-}
 
 include '../includes/error-message.php';
 ?>

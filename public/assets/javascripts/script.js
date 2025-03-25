@@ -25,64 +25,29 @@ function confirmLogout(event) {
     });
 }
 
-function confirmDelete(event, eventId) {
+function confirmDelete(event, itemId, itemType) {
     event.preventDefault();
-    console.log("Event ID:", eventId); // Log the event ID to check if it's correct
+    console.log(itemType + " ID:", itemId); // Log the item ID to check if it's correct
+
+    let confirmationMessage = `Do you really want to delete the ${itemType}?`;
+    let deleteUrl = `/${itemType}/delete?${itemType}Id=${itemId}`;
 
     Swal.fire({
         title: 'Are you sure?',
-        text: "Do you really want to delete the event?",
+        text: confirmationMessage,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, Delete',
+        confirmButtonText: `Yes, Delete ${itemType}`,
         cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Redirect to the delete URL with the event ID
-            window.location.href = '/events/delete?eventId=' + eventId;
+            // Redirect to the delete URL with the item ID
+            window.location.href = deleteUrl;
         }
     });
 }
-
-
-function confirmUser(event) {
-    event.preventDefault();
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "Do you really want to delete user?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, Delete',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = '/users/delete';
-        }
-    });
-}
-
-function confirmCategory(event) {
-    event.preventDefault();
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "Do you really want to delete category?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, Delete',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = '/category/delete';
-        }
-    });
-}
-
 
 // ==============================
 // Set Minimum Date & Time for Event Input
@@ -171,26 +136,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const navSections = document.querySelectorAll('.nav-section');
 
     navSections.forEach(section => {
-      section.querySelector('h3').addEventListener('click', () => {
-        section.classList.toggle('active');
+        section.querySelector('h3').addEventListener('click', () => {
+            section.classList.toggle('active');
 
-        console.log(`Toggled submenu for: ${section.querySelector('h3').innerText}`);
-      });
+            console.log(`Toggled submenu for: ${section.querySelector('h3').innerText}`);
+        });
     });
-  });
-
-// ==============================
-// (Optional) Error Modal Handling (If Needed Later)
-// ==============================
-// function showErrorMessage(message) {
-//     document.getElementById('error-message').textContent = message;
-//     document.getElementById('error-modal').style.display = 'block';
-// }
-//
-// function closeErrorMessage() {
-//     document.getElementById('error-modal').style.display = 'none';
-// }
-//
-// setTimeout(function () {
-//     closeErrorMessage();
-// }, 5000);
+});

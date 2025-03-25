@@ -53,45 +53,6 @@ class UsersController
             'title' => 'Eventify - Discover Events'
         ];
     }
-
-    public function editUser(): array
-    {
-        $userId = isset($_GET['userId']) ? $_GET['userId'] : null;
-
-        if (isset($_POST['submit'])) {
-            $values = [
-                'userId' => $_POST['userId'],
-                'first_name' => $_POST['first_name'],
-                'last_name' => $_POST['last_name'],
-                'email' => $_POST['email'],
-                'phone' => $_POST['phone'],
-                'user_role' => $_SESSION['userDetails']["user_role"]
-            ];
-
-            $_SESSION['userDetails'] = [
-                'userId' => $_POST['userId'],
-                'first_name' => $_POST['first_name'],
-                'last_name' => $_POST['last_name'],
-                'email' => $_POST['email'],
-                'phone' => $_POST['phone'],
-                'user_role' => $_SESSION['userDetails']["user_role"]
-            ];
-
-            $this->userTable->update($values);
-            header('location: /home');
-            exit();
-        }
-
-        $user = $this->userTable->find('userId', $userId)[0];
-
-        return [
-            'template' => 'edituser.php',
-            'variables' => [
-                'user' => $user
-            ],
-            'title' => 'Edit Account'
-        ];
-    }
     public function search(): array
     {
         $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
@@ -110,71 +71,178 @@ class UsersController
         ];
     }
 
-    public function register(): array
+    public function save(): array
     {
-        $error = '';
-
+        $message = '';
+        $currentDateTime = date('Y-m-d\TH:i');
+    
+        // Check if updating or creating a user
+        $userId = $_POST['userId'] ?? ($_GET['userId'] ?? null);
+        $isUpdate = !empty($userId);
+        $existingUser = $isUpdate ? $this->userTable->find('userId', $userId)[0] : null;
+        $existingProfilePic = $existingUser['profile_pic'] ?? null;
+    
+        // Allowed file extensions for profile picture
+        $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp'];
+        $uploadDir = "images/profile_pics/";
+    
+        // Create directory if not exists
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0775, true);
+        }
+    
+        // Handle form submission
         if (isset($_POST['submit'])) {
+            // Validate email
             $email = $_POST['email'];
-
             $existingEmail = $this->userTable->find('email', $email);
-            if (!empty($existingEmail)) {
-                $error = 'Account exists already';
-                $_SESSION['errorMessage'] = $error;
+            if (!empty($existingEmail) && (!$userId || $existingEmail['userId'] != $userId)) {
+                $message = 'Account exists already';
+                $_SESSION['errorMessage'] = $message;
                 return [
-                    'template' => 'register.php',
-                    'variables' => ['error' => $error],
-                    'title' => 'Register - Eventify'
+                    'template' => 'user.php',
+                    'variables' => ['message' => $message],
+                    'title' => 'Save User - Eventify'
                 ];
             }
-
+    
+            // Validate password
             $password = $_POST['password'];
             $repeatPassword = $_POST['repeat_password'];
-
             if (strlen($password) < 8 || !preg_match('/\d/', $password)) {
-                $error = 'Password must be at least 8 characters long and contain at least one number';
-                $_SESSION['errorMessage'] = $error;
+                $message = 'Password must be at least 8 characters long and contain at least one number';
+                $_SESSION['errorMessage'] = $message;
                 return [
-                    'template' => 'register.php',
-                    'variables' => ['error' => $error],
-                    'title' => 'Register - Eventify',
+                    'template' => 'user.php',
+                    'variables' => ['message' => $message],
+                    'title' => 'Save User - Eventify',
                 ];
             }
-
+    
             if ($password !== $repeatPassword) {
-                $error = 'Passwords don\'t match';
-                $_SESSION['errorMessage'] = $error;
+                $message = 'Passwords don\'t match';
+                $_SESSION['errorMessage'] = $message;
                 return [
-                    'template' => 'register.php',
-                    'variables' => ['error' => $error],
-                    'title' => 'Register - Eventify',
+                    'template' => 'user.php',
+                    'variables' => ['message' => $message],
+                    'title' => 'Save User - Eventify',
                 ];
             }
-
+    
             $pw = password_hash($password, PASSWORD_DEFAULT);
-
+    
+            // Prepare user data
             $values = [
                 'first_name' => $_POST['first_name'],
                 'last_name' => $_POST['last_name'],
                 'email' => $_POST['email'],
                 'password' => $pw,
                 'phone' => $_POST['phone'],
-                'user_role' => 'USER',
-                'datecreated' => date('Y-m-d H:i'),
+                'user_role' => $_POST['user_role'] ?? 'USER',
             ];
-
-            $this->userTable->insert($values);
-            $_SESSION['registrationSuccess'] = true;
-
-            header("Location: /users/register");
-            exit();
+    
+            // Handle profile picture upload
+            if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['name'] !== "") {
+                $profilePicName = $existingProfilePic;
+                $uploadValid = true;
+    
+                $targetPath = $uploadDir . basename($_FILES['profile_pic']['name']);
+                $fileExtension = strtolower(pathinfo($targetPath, PATHINFO_EXTENSION));
+    
+                // Validate file extension
+                if (!in_array($fileExtension, $allowedExtensions)) {
+                    $message = 'Invalid file format. Please choose a valid image.';
+                    $_SESSION['errorMessage'] = $message;
+                    $uploadValid = false;
+                } else {
+                    // Validate image
+                    $check = getimagesize($_FILES["profile_pic"]["tmp_name"]);
+                    if ($check === false) {
+                        $message = 'Uploaded file is not a valid image.';
+                        $_SESSION['errorMessage'] = $message;
+                        $uploadValid = false;
+                    } else {
+                        // Upload image
+                        if (move_uploaded_file($_FILES["profile_pic"]["tmp_name"], $targetPath)) {
+                            $profilePicName = $_FILES["profile_pic"]["name"];
+                        } else {
+                            $message = 'Failed to upload image. Please try again.';
+                            $_SESSION['errorMessage'] = $message;
+                            $uploadValid = false;
+                        }
+                    }
+                }
+    
+                // If profile pic is valid, add to user values
+                if ($uploadValid) {
+                    $values['profile_pic'] = $profilePicName;
+                }
+            }
+    
+            // Update or create user
+            if ($isUpdate) {
+                $values['userId'] = $userId;
+                $values['dateupdated'] = date('Y-m-d H:i');
+                $updated = $this->userTable->update($values);
+    
+                if ($updated) {
+                    $_SESSION['userUpdateSuccess'] = true;
+                    header('Location: /users/view');
+                    exit;
+                } else {
+                    $message = 'Failed to update user. Please try again.';
+                    $_SESSION['errorMessage'] = $message;
+                }
+            } else {
+                $values['datecreated'] = date('Y-m-d H:i');
+                $inserted = $this->userTable->insert($values);
+    
+                if ($inserted) {
+                    $_SESSION['userCreationSuccess'] = true;
+                    header('Location: /users/view');
+                    exit;
+                } else {
+                    $message = 'Failed to create user. Please try again.';
+                    $_SESSION['errorMessage'] = $message;
+                }
+            }
         }
-
+    
+        $user = $isUpdate ? [$existingUser] : null;
+    
         return [
-            'template' => 'register.php',
-            'variables' => ['error' => $error],
-            'title' => 'Register - Eventify',
+            'template' => 'user.php',
+            'variables' => [
+                'currentDateTime' => $currentDateTime,
+                'user' => $user,
+                'message' => $message,
+            ],
+            'title' => $isUpdate ? 'Edit User - Eventify' : 'Create User - Eventify',
         ];
+    }
+    public function view()
+    {
+        if (isset($_GET['userId']) && !empty($_GET['userId'])) {
+            $userId = $_GET['userId'];
+            $event = $this->userTable->find('userId', $userId);
+            return [
+                'template' => 'event-single.php',
+                'variables' => [
+                    'event' => $event[0],
+                ],
+                'title' => 'View Account - Eventify'
+            ];
+        } else {
+            $user = $this->userTable->findAll();
+
+            return [
+                'template' => 'event-menu.php',
+                'variables' => [
+                    'user' => $user,
+                ],
+                'title' => 'Event Menu - Eventify'
+            ];
+        }
     }
     public function login(): array
     {

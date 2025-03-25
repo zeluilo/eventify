@@ -1,3 +1,7 @@
+<?php
+include '../includes/error-message.php';
+?>
+
 <div class="grid-container">
   <aside id="sidebar">
     <div class="sidebar-title">
@@ -30,15 +34,12 @@
 </div>
 
 <script>
-  let pageVariable = "category"; // Set the default page to category
+  let pageVariable = "category";
 
   // This function will set the page type based on the selected menu
   function showMenu(type) {
-    console.log('Selected menu:', type); // Debugging line to check selected menu
-
     // Set the pageVariable based on the selected menu
     pageVariable = type;
-    console.log('Page type set to:', pageVariable); // Debugging line to verify the page type
 
     // Hide all menus
     const menus = ['category', 'event', 'account'];
@@ -46,7 +47,6 @@
       const menuElement = document.getElementById(menu + "-menu");
       if (menuElement) {
         menuElement.style.display = "none";
-        console.log('Hiding menu:', menu); // Debugging line to verify hiding
       }
     });
 
@@ -54,9 +54,8 @@
     const selectedMenu = document.getElementById(type + "-menu");
     if (selectedMenu) {
       selectedMenu.style.display = "block";
-      console.log('Showing menu:', type);
     } else {
-      console.error('Menu not found:', type + "-menu"); // Debugging line to catch any errors
+      console.error('Menu not found:', type + "-menu");
     }
   }
 
@@ -66,8 +65,6 @@
       var searchTerm = this.value.trim();
       var searchType = this.getAttribute('data-type');
 
-      console.log(`Searching ${searchType}:`, searchTerm);
-
       var xhr = new XMLHttpRequest();
       xhr.open('POST', '/events/search', true);
       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -76,13 +73,10 @@
         if (xhr.readyState == 4 && xhr.status == 200) {
           var response = JSON.parse(xhr.responseText);
 
-          // Log the entire response to inspect its structure
-          console.log(response);
-
           // Determine which part of the response to use based on searchType
           var data = [];
           if (searchType === 'category') {
-            data = response.categories || []; // Default to empty array if categories are not found
+            data = response.categories || [];
           } else if (searchType === 'event') {
             data = response.events || [];
           } else if (searchType === 'account') {
@@ -91,15 +85,20 @@
 
           // Ensure the data is an array and contains results
           if (!Array.isArray(data) || data.length === 0) {
-            console.log(`No results found for ${searchType}.`);
+            // Return a row with "No results found" if no results are found
+            const noResultsRow = `<tr><td colspan="6">No ${searchType} found.</td></tr>`;
+            // Update the appropriate table with the no results row
+            const resultTableId = searchType === 'category' ? 'categoryResults' :
+              searchType === 'event' ? 'eventResults' :
+              'userResults';
+            document.getElementById(resultTableId).innerHTML = noResultsRow;
             return;
           }
 
           // Determine which table to update based on searchType
           var resultTableId = searchType === 'category' ? 'categoryResults' :
             searchType === 'event' ? 'eventResults' :
-            'userResults'; // Default to account users
-
+            'userResults';
           updateTable(resultTableId, data);
         }
       };
@@ -109,8 +108,6 @@
   });
 
   function updateTable(elementId, data) {
-    console.log(`Updating table: ${elementId} with data:`, data);
-
     var tableBody = document.getElementById(elementId);
     if (!tableBody) {
       console.error(`Element with ID ${elementId} not found.`);
@@ -119,54 +116,57 @@
 
     tableBody.innerHTML = '';
 
-    // Check if data is valid (an array) and has items
-    if (!Array.isArray(data) || data.length === 0) {
-      console.log(`No results found for ${elementId}.`);
-      tableBody.innerHTML = '<tr><td colspan="6">No results found.</td></tr>';
-      return;
-    }
-
-    // Example for user fields, adjust for categories or events
-    const fields = elementId === 'userResults' ? ['userId', 'first_name', 'last_name', 'email', 'phone', 'user_role', 'datecreated'] :
-      elementId === 'categoryResults' ? ['category_name', 'datecreate'] : ['event_name', 'event_date'];
-
     data.forEach(item => {
       var row = '<tr>';
+      var fullName = item.first_name + ' ' + item.last_name;
 
-      // For users, let's join 'first_name' and 'last_name' into 'full_name'
       if (elementId === 'userResults') {
-        var fullName = item.first_name + ' ' + item.last_name; // Combine first and last name
-        row += '<td>' + fullName + '</td>'; // Add full name in place of separate first and last names
+        row += '<td>' + fullName + '</td>';
         row += '<td>' + item.email + '</td>';
         row += '<td>' + item.phone + '</td>';
         row += '<td>' + item.user_role + '</td>';
         row += '<td>' + item.datecreated + '</td>';
+
+        // Edit and delete buttons for users dynamically using userId
+        row += `
+      <td>
+        <a class="edit-btn" href="/users/edit?userId=${item.userId}"><span class="material-icons-outlined">edit</span></a>
+        <a class="delete-btn" href="/users/delete?userId=${item.userId}"><span class="material-icons-outlined">delete</span></a>
+      </td>
+    `;
       }
 
-      // For categories, you might want to format the category name and date created
       else if (elementId === 'categoryResults') {
         row += '<td>' + item.category_name + '</td>';
-        row += '<td>' + item.datecreate.toLocaleDateString() + '</td>'; // Format date as needed
-      }
+        row += '<td>' + item.datecreate + '</td>';
+        row += `
+      <td>
+        <a class="edit-btn" href="/category/save?categoryId=${item.categoryId}"><span class="material-icons-outlined">edit</span></a>
+        <a class="delete-btn" href="/category/delete?categoryId=${item.categoryId}"><span class="material-icons-outlined">delete</span></a>
+      </td>
+    `;
 
-      // For events, join multiple fields or format data as needed
+      }
       else if (elementId === 'eventResults') {
-        row += '<td>' + item.event_name + '</td>';
-        row += '<td>' + new Date(item.event_date).toLocaleDateString() + '</td>'; // Format date as needed
-      }
+        row += '<td>' + item.title + '</td>';
+        row += '<td>' + item.location + '</td>';
+        row += '<td>' + new Date(item.event_date).toLocaleDateString() + '</td>';
+        row += '<td>' + item.category_name + '</td>';
+        row += '<td>' + fullName + '</td>';
+        row += '<td>' + item.email + '</td>';
+        row += '<td>' + item.role + '</td>';
+        row += `
+      <td>
+        <a class="edit-btn" href="/events/view?eventId=${item.eventId}"><span class="material-icons-outlined">edit</span></a>
+        <a class="delete-btn" href="/events/delete?eventId=${item.eventId}"><span class="material-icons-outlined">delete</span></a>
+      </td>
+    `;
 
-      row += `
-    <td>
-      <button class="edit-btn"><span class="material-icons-outlined">edit</span></button>
-      <button class="delete-btn"><span class="material-icons-outlined">delete</span></button>
-    </td>
-  `;
+      }
 
       row += '</tr>';
       tableBody.innerHTML += row;
     });
-
     console.log(`Table ${elementId} updated successfully.`);
-
   }
 </script>

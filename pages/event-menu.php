@@ -1,28 +1,4 @@
-<?php if (isset($_SESSION['eventUpdateSuccess']) && $_SESSION['eventUpdateSuccess'] === true) {
-    unset($_SESSION['eventUpdateSuccess']);
-    echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
-      <script>
-        Swal.fire({
-            title: 'Event Updated Successfully!',
-            text: 'The event details have been updated.',
-            icon: 'success',
-            confirmButtonText: 'OK'
-        });
-      </script>";
-}
-
-if (isset($_SESSION['eventDeletionSuccess']) && $_SESSION['eventDeletionSuccess'] === true) {
-    unset($_SESSION['eventDeletionSuccess']);
-    echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
-    <script>
-        Swal.fire({
-            title: 'Event Deleted Successfully!',
-            text: 'The event has been removed from the list.',
-            icon: 'success',
-            confirmButtonText: 'OK'
-        });
-    </script>";
-}
+<?php 
 
 // Include error messages
 include '../includes/error-message.php';

@@ -87,7 +87,7 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
                 <div class="event-actions">
                     <a href="/events/save?eventId=<?php echo $event['eventId']; ?>" class="btn btn-edit">Edit Event</a>
                     <a href="#" class="btn btn-delete"
-                        onclick="confirmDelete(event, <?php echo $event['eventId']; ?>)">
+                        onclick="confirmDelete(event, <?php echo $event['eventId']; ?>, 'events')">
                         Delete Event
                     </a>
 

@@ -254,11 +254,11 @@ class EventController
         ];
     
         if (!empty($search)) {
-            $results['events'] = $this->eventTable->searchEvents($search);
+            $results['events'] = $this->viewEventDetails->searchEvents($search);
             $results['categories'] = $this->categoryTable->searchCategory($search);
             $results['users'] = $this->userTable->searchUsers($search);
         } else {
-            $results['events'] = $this->eventTable->findAll();
+            $results['events'] = $this->viewEventDetails->findAll();
             $results['categories'] = $this->categoryTable->findAll();
             $results['users'] = $this->userTable->find('user_role', 'USER');
         }

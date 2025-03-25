@@ -41,38 +41,40 @@
 
   <div class="data-section">
     <div class="table-header">
-        <h2>Category List</h2>
-        <div class="table-header-right">
-            <div class="search-bar">
-                <input type="text" name="search" class="searchInput" data-type="category" placeholder="Search category...">
-            </div>
-            <a class="action-btn add-btn" href="/events/save">
-                <span class="material-icons-outlined">add</span> Add New Category
-            </a>
+      <h2>Category List</h2>
+      <div class="table-header-right">
+        <div class="search-bar">
+          <input type="text" name="search" class="searchInput" data-type="category" placeholder="Search category...">
         </div>
+        <a class="action-btn add-btn" href="/category/save">
+          <span class="material-icons-outlined">add</span> Add New Category
+        </a>
+      </div>
     </div>
 
-    <table  class="data-table">
-        <thead>
-            <tr>
-                <th>Category Name</th>
-                <th>Date Created</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="categoryResults">
-            <?php foreach ($categories as $category): ?>
-                <tr>
-                    <td><?= htmlspecialchars($category['category_name']) ?></td>
-                    <td><?= htmlspecialchars($category['datecreate']) ?></td>
-                    <td>
-                        <button class="edit-btn"><span class="material-icons-outlined">edit</span></button>
-                        <button class="delete-btn"><span class="material-icons-outlined">delete</span></button>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Category Name</th>
+          <th>Date Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="categoryResults">
+        <?php foreach ($categories as $category): ?>
+          <tr>
+            <td><?= htmlspecialchars($category['category_name']) ?></td>
+            <td><?= htmlspecialchars($category['datecreate']) ?></td>
+            <td>
+              <a class="edit-btn" href="/category/save?categoryId=<?= $category['categoryId'] ?>"><span class="material-icons-outlined">edit</span></a>
+              <a class="delete-btn" onclick="confirmDelete(event, <?php echo $category['categoryId']; ?>, 'category')">
+                <span class=" material-icons-outlined">delete</span>
+              </a>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
     </table>
-</div>
+  </div>
 
 </main>

@@ -38,8 +38,8 @@
             <td> <?= htmlspecialchars($user['datecreated']) ?> </td>
 
             <td>
-              <button class="edit-btn"><span class="material-icons-outlined">edit</span></button>
-              <button class="delete-btn"><span class="material-icons-outlined">delete</span></button>
+              <a class="edit-btn"><span class="material-icons-outlined">edit</span></a>
+              <a class="delete-btn"><span class="material-icons-outlined">delete</span></a>
             </td>
           </tr>
         <?php endforeach; ?>
