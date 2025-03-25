@@ -125,7 +125,7 @@ include '../includes/error-message.php';
         row += '<td>' + item.email + '</td>';
         row += '<td>' + item.phone + '</td>';
         row += '<td>' + item.user_role + '</td>';
-        row += '<td>' + item.datecreated + '</td>';
+        row += '<td>' + formatDate(item.datecreated) + '</td>';
 
         // Edit and delete buttons for users dynamically using userId
         row += `
@@ -137,7 +137,7 @@ include '../includes/error-message.php';
     `;
       } else if (elementId === 'categoryResults') {
         row += '<td>' + item.category_name + '</td>';
-        row += '<td>' + item.datecreate + '</td>';
+        row += '<td>' + formatDate(item.datecreate) + '</td>';
         row += `
       <td>
         <a class="edit-btn" href="/category/save?categoryId=${item.categoryId}"><span class="material-icons-outlined">edit</span></a>
@@ -149,11 +149,9 @@ include '../includes/error-message.php';
       } else if (elementId === 'eventResults') {
         row += '<td>' + item.title + '</td>';
         row += '<td>' + item.location + '</td>';
-        row += '<td>' + new Date(item.event_date).toLocaleDateString() + '</td>';
+        row += '<td>' + formatDate(item.event_date) + '</td>';
         row += '<td>' + item.category_name + '</td>';
         row += '<td>' + fullName + '</td>';
-        row += '<td>' + item.email + '</td>';
-        row += '<td>' + item.role + '</td>';
         row += `
       <td>
         <a class="edit-btn" href="/events/view?eventId=${item.eventId}"><span class="material-icons-outlined">edit</span></a>

@@ -200,13 +200,13 @@ class EventController
                 // Delete the event if it exists
                 $this->eventTable->delete($eventId);
                 $_SESSION['eventDeletionSuccess'] = true;
-                header('location: /events/view');
+                // header('location: /events/view');
                 exit();
             } else {
                 // Event not found, show an error message
                 $message = "Event not found.";
                 $_SESSION['errorMessage'] = $message;
-                header('location: /events/view');
+                // header('location: /events/view');
                 exit();
             }
         }

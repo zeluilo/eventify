@@ -24,8 +24,6 @@
                     <th>Event Date</th>
                     <th>Category</th>
                     <th>Created by</th>
-                    <th>Staff Email</th>
-                    <th>Staff Role</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -34,11 +32,9 @@
                     <tr>
                         <td> <?= htmlspecialchars($event['title']) ?> </td>
                         <td> <?= htmlspecialchars($event['location']) ?> </td>
-                        <td> <?= htmlspecialchars($event['event_date']) ?> </td>
+                        <td> <?= htmlspecialchars(date('F j, Y', strtotime($event['event_date']))) ?> </td>
                         <td> <?= htmlspecialchars($event['category_name']) ?> </td>
                         <td> <?= htmlspecialchars($event['first_name'] . " " . $event['last_name']) ?> </td>
-                        <td> <?= htmlspecialchars($event['email']) ?> </td>
-                        <td> <?= htmlspecialchars($event['role']) ?> </td>
                         <td>
                             <a class="edit-btn" href="/events/view?eventId=<?= $event['eventId'] ?>"><span class="material-icons-outlined">edit</span></a>
                             <a class="delete-btn" onclick="confirmDelete(event, <?php echo $event['eventId']; ?>, 'event')">

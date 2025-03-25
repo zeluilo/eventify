@@ -35,7 +35,7 @@
             <td> <?= htmlspecialchars(string: $user['email']) ?> </td>
             <td> <?= htmlspecialchars(string: $user['phone']) ?> </td>
             <td> <?= htmlspecialchars($user['user_role']) ?> </td>
-            <td> <?= htmlspecialchars($user['datecreated']) ?> </td>
+            <td> <?= htmlspecialchars(date('F j, Y', strtotime($user['datecreated']))) ?> </td>
 
             <td>
               <a class="edit-btn" href="/users/view?userId=<?= $user['userId'] ?>"><span class="material-icons-outlined">edit</span></a>

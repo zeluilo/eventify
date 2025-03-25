@@ -1,6 +1,6 @@
 <?php
 if (isset($_SESSION['errorMessage']) && !empty($_SESSION['errorMessage'])) {
-  echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+    echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
           <script>
             Swal.fire({
                 title: 'Error!',
@@ -9,7 +9,7 @@ if (isset($_SESSION['errorMessage']) && !empty($_SESSION['errorMessage'])) {
                 confirmButtonText: 'Okay'
             });
           </script>";
-  unset($_SESSION['errorMessage']);
+    unset($_SESSION['errorMessage']);
 }
 
 if (isset($_SESSION['categoryCreationSuccess']) && $_SESSION['categoryCreationSuccess'] === true) {
@@ -94,3 +94,4 @@ if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess'] 
           });
         </script>";
 }
+?>

@@ -74,6 +74,21 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+// Function to format the event date and time
+function formatDate(eventDate) {
+    const date = new Date(eventDate);
+    return date.toLocaleString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit', 
+        hour12: true 
+    });
+}
+
 
 // ==============================
 // Live Event Search (AJAX Filtering)

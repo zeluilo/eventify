@@ -64,7 +64,7 @@
         <?php foreach ($categories as $category): ?>
           <tr>
             <td><?= htmlspecialchars($category['category_name']) ?></td>
-            <td><?= htmlspecialchars($category['datecreate']) ?></td>
+            <td> <?= htmlspecialchars(date('F j, Y g:i A', strtotime($category['datecreate']))) ?> </td>
             <td>
               <a class="edit-btn" href="/category/save?categoryId=<?= $category['categoryId'] ?>"><span class="material-icons-outlined">edit</span></a>
               <a class="delete-btn" onclick="confirmDelete(event, <?php echo $category['categoryId']; ?>, 'category')">
