@@ -130,24 +130,23 @@ include '../includes/error-message.php';
         // Edit and delete buttons for users dynamically using userId
         row += `
       <td>
-        <a class="edit-btn" href="/users/edit?userId=${item.userId}"><span class="material-icons-outlined">edit</span></a>
-        <a class="delete-btn" href="/users/delete?userId=${item.userId}"><span class="material-icons-outlined">delete</span></a>
+        <a class="edit-btn" href="/users/view?userId=${item.userId}"><span class="material-icons-outlined">edit</span></a>
+        <a class="delete-btn" onclick="confirmDelete(event, ${item.userId}, 'user')">
+        <span class="material-icons-outlined">delete</span></a>
       </td>
     `;
-      }
-
-      else if (elementId === 'categoryResults') {
+      } else if (elementId === 'categoryResults') {
         row += '<td>' + item.category_name + '</td>';
         row += '<td>' + item.datecreate + '</td>';
         row += `
       <td>
         <a class="edit-btn" href="/category/save?categoryId=${item.categoryId}"><span class="material-icons-outlined">edit</span></a>
-        <a class="delete-btn" href="/category/delete?categoryId=${item.categoryId}"><span class="material-icons-outlined">delete</span></a>
+        <a class="delete-btn" onclick="confirmDelete(event, ${item.categoryId}, 'category')">
+        <span class="material-icons-outlined">delete</span></a>
       </td>
     `;
 
-      }
-      else if (elementId === 'eventResults') {
+      } else if (elementId === 'eventResults') {
         row += '<td>' + item.title + '</td>';
         row += '<td>' + item.location + '</td>';
         row += '<td>' + new Date(item.event_date).toLocaleDateString() + '</td>';
@@ -158,7 +157,8 @@ include '../includes/error-message.php';
         row += `
       <td>
         <a class="edit-btn" href="/events/view?eventId=${item.eventId}"><span class="material-icons-outlined">edit</span></a>
-        <a class="delete-btn" href="/events/delete?eventId=${item.eventId}"><span class="material-icons-outlined">delete</span></a>
+        <a class="delete-btn" onclick="confirmDelete(event, ${item.eventId}, 'event')">
+        <span class="material-icons-outlined">delete</span></a>
       </td>
     `;
 

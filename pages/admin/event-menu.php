@@ -41,7 +41,9 @@
                         <td> <?= htmlspecialchars($event['role']) ?> </td>
                         <td>
                             <a class="edit-btn" href="/events/view?eventId=<?= $event['eventId'] ?>"><span class="material-icons-outlined">edit</span></a>
-                            <a class="delete-btn"><span class="material-icons-outlined">delete</span></a>
+                            <a class="delete-btn" onclick="confirmDelete(event, <?php echo $event['eventId']; ?>, 'event')">
+                                <span class=" material-icons-outlined">delete</span>
+                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

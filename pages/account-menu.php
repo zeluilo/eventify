@@ -38,8 +38,10 @@
             <td> <?= htmlspecialchars($user['datecreated']) ?> </td>
 
             <td>
-              <a class="edit-btn"><span class="material-icons-outlined">edit</span></a>
-              <a class="delete-btn"><span class="material-icons-outlined">delete</span></a>
+              <a class="edit-btn" href="/users/view?userId=<?= $user['userId'] ?>"><span class="material-icons-outlined">edit</span></a>
+              <a class="delete-btn" onclick="confirmDelete(event, <?php echo $user['userId']; ?>, 'user')">
+                <span class=" material-icons-outlined">delete</span>
+              </a>
             </td>
           </tr>
         <?php endforeach; ?>

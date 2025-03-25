@@ -30,8 +30,16 @@ function confirmDelete(event, itemId, itemType) {
     console.log(itemType + " ID:", itemId); // Log the item ID to check if it's correct
 
     let confirmationMessage = `Do you really want to delete the ${itemType}?`;
-    let deleteUrl = `/${itemType}/delete?${itemType}Id=${itemId}`;
-
+    // Check itemType and create the appropriate URL for deletion
+    let deleteUrl = '';
+    if (itemType === 'event') {
+        deleteUrl = `/events/delete?eventId=${itemId}`;
+    } else if (itemType === 'user') {
+        deleteUrl = `/users/delete?userId=${itemId}`;
+    } else {
+        deleteUrl = `/${itemType}/delete?${itemType}Id=${itemId}`;
+    }
+    
     Swal.fire({
         title: 'Are you sure?',
         text: confirmationMessage,

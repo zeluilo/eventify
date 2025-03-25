@@ -53,7 +53,7 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
                     </li>
                     <div class="dropdown-divider"></div>
                     <li>
-                        <a class="dropdown-item" href="/admin/edituser?userId=<?php echo $userDetails['userId'] ?>">
+                        <a class="dropdown-item" href="/users/view?userId=<?php echo $userDetails['userId'] ?>">
                             Profile
                         </a>
                     </li>

@@ -92,26 +92,43 @@ class CategoryController
     public function delete(): array
     {
         $message = '';
+        
+        // Check if categoryId is provided in the request
         if (isset($_GET['categoryId'])) {
             $categoryId = $_GET['categoryId'];
-            $event = $this->categoryTable->find('categoryId', $categoryId);
-            if ($event) {
+    
+            // Find the category by categoryId
+            $category = $this->categoryTable->find('categoryId', $categoryId);
+    
+            if ($category) {
+                // Delete events associated with the category first
+                $events = $this->eventTable->find('categoryId', $categoryId);
+                if ($events) {
+                    foreach ($events as $event) {
+                        // Delete the event
+                        $this->eventTable->delete('eventId', $event['eventId']);
+                    }
+                }
+    
                 // Delete the category if it exists
-                $this->categoryTable->delete($categoryId);
+                $this->categoryTable->delete('categoryId', $categoryId);
                 $_SESSION['categoryDeletionSuccess'] = true;
-                header('location: /events/dashboard');
+    
+                // Redirect to the events dashboard
+                header('Location: /events/dashboard');
                 exit();
             } else {
-                // Dashboard not found, show an error message
+                // Category not found, show an error message
                 $message = "Category not found.";
                 $_SESSION['errorMessage'] = $message;
-                header('location: /events/dashboard');
+                    header('Location: /events/dashboard');
                 exit();
             }
         }
-        header('location: /events/dashboard');
-        exit;
-    }
+    
+        header('Location: /events/dashboard');
+        exit();
+    }    
       
 
     public function startSession()

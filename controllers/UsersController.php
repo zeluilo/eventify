@@ -1,6 +1,7 @@
 <?php
 
 namespace Controllers;
+
 class UsersController
 {
     private $userTable;
@@ -75,22 +76,22 @@ class UsersController
     {
         $message = '';
         $currentDateTime = date('Y-m-d\TH:i');
-    
+
         // Check if updating or creating a user
         $userId = $_POST['userId'] ?? ($_GET['userId'] ?? null);
         $isUpdate = !empty($userId);
         $existingUser = $isUpdate ? $this->userTable->find('userId', $userId)[0] : null;
         $existingProfilePic = $existingUser['profile_pic'] ?? null;
-    
+
         // Allowed file extensions for profile picture
         $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp'];
         $uploadDir = "images/profile_pics/";
-    
+
         // Create directory if not exists
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0775, true);
         }
-    
+
         // Handle form submission
         if (isset($_POST['submit'])) {
             // Validate email
@@ -105,7 +106,7 @@ class UsersController
                     'title' => 'Save User - Eventify'
                 ];
             }
-    
+
             // Validate password
             $password = $_POST['password'];
             $repeatPassword = $_POST['repeat_password'];
@@ -118,7 +119,7 @@ class UsersController
                     'title' => 'Save User - Eventify',
                 ];
             }
-    
+
             if ($password !== $repeatPassword) {
                 $message = 'Passwords don\'t match';
                 $_SESSION['errorMessage'] = $message;
@@ -128,9 +129,9 @@ class UsersController
                     'title' => 'Save User - Eventify',
                 ];
             }
-    
+
             $pw = password_hash($password, PASSWORD_DEFAULT);
-    
+
             // Prepare user data
             $values = [
                 'first_name' => $_POST['first_name'],
@@ -140,15 +141,15 @@ class UsersController
                 'phone' => $_POST['phone'],
                 'user_role' => $_POST['user_role'] ?? 'USER',
             ];
-    
+
             // Handle profile picture upload
             if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['name'] !== "") {
                 $profilePicName = $existingProfilePic;
                 $uploadValid = true;
-    
+
                 $targetPath = $uploadDir . basename($_FILES['profile_pic']['name']);
                 $fileExtension = strtolower(pathinfo($targetPath, PATHINFO_EXTENSION));
-    
+
                 // Validate file extension
                 if (!in_array($fileExtension, $allowedExtensions)) {
                     $message = 'Invalid file format. Please choose a valid image.';
@@ -172,19 +173,19 @@ class UsersController
                         }
                     }
                 }
-    
+
                 // If profile pic is valid, add to user values
                 if ($uploadValid) {
                     $values['profile_pic'] = $profilePicName;
                 }
             }
-    
+
             // Update or create user
             if ($isUpdate) {
                 $values['userId'] = $userId;
                 $values['dateupdated'] = date('Y-m-d H:i');
                 $updated = $this->userTable->update($values);
-    
+
                 if ($updated) {
                     $_SESSION['userUpdateSuccess'] = true;
                     header('Location: /users/view');
@@ -196,7 +197,7 @@ class UsersController
             } else {
                 $values['datecreated'] = date('Y-m-d H:i');
                 $inserted = $this->userTable->insert($values);
-    
+
                 if ($inserted) {
                     $_SESSION['userCreationSuccess'] = true;
                     header('Location: /users/view');
@@ -207,9 +208,9 @@ class UsersController
                 }
             }
         }
-    
+
         $user = $isUpdate ? [$existingUser] : null;
-    
+
         return [
             'template' => 'user.php',
             'variables' => [
@@ -224,21 +225,23 @@ class UsersController
     {
         if (isset($_GET['userId']) && !empty($_GET['userId'])) {
             $userId = $_GET['userId'];
-            $event = $this->userTable->find('userId', $userId);
+            $user = $this->userTable->find('userId', $userId);
+
             return [
-                'template' => 'event-single.php',
+                'template' => 'profile.php',
                 'variables' => [
-                    'event' => $event[0],
+                    'user' => $user[0],
                 ],
-                'title' => 'View Account - Eventify'
+                'title' => 'View Profile - Eventify'
             ];
         } else {
-            $user = $this->userTable->findAll();
+            // If no specific userId is provided, show all users in the event menu
+            $users = $this->userTable->findAll();
 
             return [
                 'template' => 'event-menu.php',
                 'variables' => [
-                    'user' => $user,
+                    'users' => $users,
                 ],
                 'title' => 'Event Menu - Eventify'
             ];
@@ -262,7 +265,6 @@ class UsersController
                 } else {
                     $show_message = 'Incorrect login details. Please try again!';
                     $_SESSION['errorMessage'] = $show_message;
-
                 }
                 $_SESSION['loginSuccess'] = true;
             } else {
@@ -275,6 +277,49 @@ class UsersController
             'title' => 'Login - Eventify',
             'variables' => ['show_message' => $show_message]
         ];
+    }
+    public function delete()
+    {
+        $message = '';
+
+        if (isset($_GET['userId']) && !empty($_GET['userId'])) {
+            $userId = $_GET['userId'];
+
+            // Check if the user is logged in and has a valid role
+            if (isset($_SESSION['userDetails']) && $_SESSION['userDetails']['user_role']) {
+                $currentUserRole = $_SESSION['userDetails']['user_role'];
+            } else {
+                $currentUserRole = null;  // If no user role found, treat it as unauthorized
+            }
+
+            // Check if the user exists before attempting deletion
+            $user = $this->userTable->find('userId', $userId);
+
+            if ($user) {
+                $this->userTable->delete('userId', $userId);
+                $_SESSION['deleteSuccess'] = true;
+
+                // Redirect based on the current user's role
+                if ($currentUserRole === 'ADMIN') {
+                    header("Location: /events/dashboard");
+                    exit();
+                } elseif ($currentUserRole === 'USER') {
+                    header("Location: /users/logout");
+                    exit();
+                }
+            } else {
+                // User not found
+                $message = "User not found!";
+                $_SESSION['errorMessage'] = $message;
+                header("Location: /users/home");
+                exit();
+            }
+        } else {
+            // No userId provided in the request
+            $_SESSION['deleteError'] = "Invalid request!";
+            header("Location: /users");
+            exit();
+        }
     }
 
     public function session()
