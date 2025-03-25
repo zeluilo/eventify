@@ -57,23 +57,44 @@
         <tr>
           <th>Category Name</th>
           <th>Date Created</th>
+          <th>Date Updated</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody id="categoryResults">
-        <?php foreach ($categories as $category): ?>
+        <?php if (!empty($categories)): ?>
+          <?php foreach ($categories as $category): ?>
+            <tr>
+              <td><?= htmlspecialchars($category['category_name']) ?></td>
+              <td> <?= htmlspecialchars(date('F j, Y g:i A', strtotime($category['datecreate']))) ?> </td>
+              <td>
+                <?php
+                if (!empty($category['dateupdate'])) {
+                  echo htmlspecialchars(date('F j, Y g:i A', strtotime($category['dateupdate'])));
+                } else {
+                  echo "No update yet";
+                }
+                ?>
+              </td>
+              <td>
+                <a class="edit-btn" href="/category/save?categoryId=<?= $category['categoryId'] ?>">
+                  <span class="material-icons-outlined">edit</span>
+                </a>
+                <a class="delete-btn" onclick="confirmDelete(event, <?php echo $category['categoryId']; ?>, 'category')">
+                  <span class="material-icons-outlined">delete</span>
+                </a>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        <?php else: ?>
           <tr>
-            <td><?= htmlspecialchars($category['category_name']) ?></td>
-            <td> <?= htmlspecialchars(date('F j, Y g:i A', strtotime($category['datecreate']))) ?> </td>
-            <td>
-              <a class="edit-btn" href="/category/save?categoryId=<?= $category['categoryId'] ?>"><span class="material-icons-outlined">edit</span></a>
-              <a class="delete-btn" onclick="confirmDelete(event, <?php echo $category['categoryId']; ?>, 'category')">
-                <span class=" material-icons-outlined">delete</span>
-              </a>
+            <td style="text-align: center; padding: 20px; font-weight: bold;">
+              No category found.
             </td>
           </tr>
-        <?php endforeach; ?>
+        <?php endif; ?>
       </tbody>
+
     </table>
   </div>
 

@@ -86,7 +86,11 @@ include '../includes/error-message.php';
           // Ensure the data is an array and contains results
           if (!Array.isArray(data) || data.length === 0) {
             // Return a row with "No results found" if no results are found
-            const noResultsRow = `<tr><td colspan="6">No ${searchType} found.</td></tr>`;
+            const noResultsRow = `<tr>
+            <td style="text-align: center; padding: 20px; font-weight: bold;">
+              No ${searchType} found.
+            </td>
+          </tr>`;
             // Update the appropriate table with the no results row
             const resultTableId = searchType === 'category' ? 'categoryResults' :
               searchType === 'event' ? 'eventResults' :
@@ -138,6 +142,7 @@ include '../includes/error-message.php';
       } else if (elementId === 'categoryResults') {
         row += '<td>' + item.category_name + '</td>';
         row += '<td>' + formatDate(item.datecreate) + '</td>';
+        row += '<td>' + (item.dateupdate ? formatDate(item.dateupdate) : 'No update yet') + '</td>';
         row += `
       <td>
         <a class="edit-btn" href="/category/save?categoryId=${item.categoryId}"><span class="material-icons-outlined">edit</span></a>

@@ -66,7 +66,7 @@ class CategoryController
                 $values['datecreate'] = date('Y-m-d H:i');
                 $inserted = $this->categoryTable->insert($values);
     
-                if ($inserted) {
+                if (!$inserted) {
                     $_SESSION['categoryCreationSuccess'] = true;
                     header('Location: /events/dashboard');
                     exit;
@@ -88,11 +88,10 @@ class CategoryController
             'title' => $isUpdate ? 'Edit Category - Eventify' : 'Create Category - Eventify',
         ];
     }
-
     public function delete(): array
     {
         $message = '';
-        
+    
         // Check if categoryId is provided in the request
         if (isset($_GET['categoryId'])) {
             $categoryId = $_GET['categoryId'];
@@ -100,28 +99,27 @@ class CategoryController
             // Find the category by categoryId
             $category = $this->categoryTable->find('categoryId', $categoryId);
     
-            if ($category) {
+            if ($category) {    
                 // Delete events associated with the category first
                 $events = $this->eventTable->find('categoryId', $categoryId);
                 if ($events) {
                     foreach ($events as $event) {
-                        // Delete the event
-                        $this->eventTable->delete('eventId', $event['eventId']);
+                        $this->eventTable->delete($event['eventId']);
                     }
+                } else {
+                    error_log("No events found for category ID: " . $categoryId);
                 }
     
-                // Delete the category if it exists
-                $this->categoryTable->delete('categoryId', $categoryId);
+                // Delete the category
+                $this->categoryTable->delete($categoryId);
                 $_SESSION['categoryDeletionSuccess'] = true;
     
                 // Redirect to the events dashboard
                 header('Location: /events/dashboard');
                 exit();
             } else {
-                // Category not found, show an error message
-                $message = "Category not found.";
-                $_SESSION['errorMessage'] = $message;
-                    header('Location: /events/dashboard');
+                $_SESSION['errorMessage'] = "Category not found.";
+                header('Location: /events/dashboard');
                 exit();
             }
         }
@@ -130,14 +128,12 @@ class CategoryController
         exit();
     }    
       
-
     public function startSession()
     {
         if (!isset($_SESSION)) {
             session_start();
         }
     }
-
     public function checkLogin()
     {
         $this->startSession();
@@ -146,8 +142,6 @@ class CategoryController
             $this->redirectToLogin();
         }
     }
-
-
     public function logout()
     {
         $this->startSession();
@@ -158,7 +152,6 @@ class CategoryController
 
         $this->redirectToLogin();
     }
-
     private function redirectToLogin()
     {
         header("Location: /login");

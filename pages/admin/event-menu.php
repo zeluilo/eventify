@@ -28,23 +28,33 @@
                 </tr>
             </thead>
             <tbody id="eventResults">
-                <?php foreach ($events as $event): ?>
-                    <tr>
-                        <td> <?= htmlspecialchars($event['title']) ?> </td>
-                        <td> <?= htmlspecialchars($event['location']) ?> </td>
-                        <td> <?= htmlspecialchars(date('F j, Y', strtotime($event['event_date']))) ?> </td>
-                        <td> <?= htmlspecialchars($event['category_name']) ?> </td>
-                        <td> <?= htmlspecialchars($event['first_name'] . " " . $event['last_name']) ?> </td>
-                        <td>
-                            <a class="edit-btn" href="/events/view?eventId=<?= $event['eventId'] ?>"><span class="material-icons-outlined">edit</span></a>
-                            <a class="delete-btn" onclick="confirmDelete(event, <?php echo $event['eventId']; ?>, 'event')">
-                                <span class=" material-icons-outlined">delete</span>
-                            </a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-                <!-- More rows dynamically -->
-            </tbody>
+    <?php if (!empty($events)): ?>
+        <?php foreach ($events as $event): ?>
+            <tr>
+                <td> <?= htmlspecialchars($event['title']) ?> </td>
+                <td> <?= htmlspecialchars($event['location']) ?> </td>
+                <td> <?= htmlspecialchars(date('F j, Y', strtotime($event['event_date']))) ?> </td>
+                <td> <?= htmlspecialchars($event['category_name']) ?> </td>
+                <td> <?= htmlspecialchars($event['first_name'] . " " . $event['last_name']) ?> </td>
+                <td>
+                    <a class="edit-btn" href="/events/view?eventId=<?= $event['eventId'] ?>">
+                        <span class="material-icons-outlined">edit</span>
+                    </a>
+                    <a class="delete-btn" onclick="confirmDelete(event, <?php echo $event['eventId']; ?>, 'event')">
+                        <span class="material-icons-outlined">delete</span>
+                    </a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <tr>
+            <td style="text-align: center; padding: 20px; font-weight: bold;">
+                No events found.
+            </td>
+        </tr>
+    <?php endif; ?>
+</tbody>
+
         </table>
     </div>
 </main>

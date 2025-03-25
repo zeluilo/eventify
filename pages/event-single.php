@@ -18,6 +18,10 @@ $isLoggedInOrRegistered = isset($_SESSION['userDetails']);
 // Check if the logged-in user's checkAdmin is "USER"
 $isUser = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 'USER';
 $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 'ADMIN';
+
+// Check if the logged-in user is the creator of the event
+$isEventCreator = $isLoggedInOrRegistered && $_SESSION['userDetails']['userId'] === $event['userId'];
+include '../includes/error-message.php';
 ?>
 
 <section id="home" class="home section dark-background" style="background-image: url('<?php echo '../images/events/' . $event['image']; ?>');">
@@ -32,7 +36,7 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
     <div class="event-details-container">
 
         <div class="event-image-wrapper">
-            <img src="<?php echo '../images/events/' . $event['image']; ?>" alt="Event Image" class="event-image">
+            <img src="<?php echo !empty($event['image']) ? '../images/events/' . $event['image'] : '../assets/images/favicon.png'; ?>" alt="Event Image" class="event-image">
         </div>
 
         <div class="event-info">
@@ -82,12 +86,12 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
                     </tr>
                 <? endif; ?>
             </table>
-            <?php if ($isAdmin || $isUser) : ?>
+            <?php if ($isAdmin || $isEventCreator) : ?>
 
                 <div class="event-actions">
                     <a href="/events/save?eventId=<?php echo $event['eventId']; ?>" class="btn btn-edit">Edit Event</a>
                     <a href="#" class="btn btn-delete"
-                        onclick="confirmDelete(event, <?php echo $event['eventId']; ?>, 'events')">
+                        onclick="confirmDelete(event, <?php echo $event['eventId']; ?>, 'event')">
                         Delete Event
                     </a>
 

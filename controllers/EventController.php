@@ -164,13 +164,15 @@ class EventController
                     $values['dateupdate'] = date('Y-m-d H:i');
                     $this->eventTable->update($values);
                     $_SESSION['eventUpdateSuccess'] = true;
-                    header('Location: /events/view');
+                    header("Location: /events/view?eventId=$eventId");
+                    // echo "<script>window.history.back();</script>";
                     exit;
                 } else {
                     $values['datecreate'] = date('Y-m-d H:i');
                     $this->eventTable->insert($values);
                     $_SESSION['eventCreationSuccess'] = true;
-                    header('Location: /events/view');
+                    header('Location: /events/save');
+                    // echo "<script>window.history.back();</script>";
                     exit;
                 }
             }
@@ -200,15 +202,29 @@ class EventController
                 // Delete the event if it exists
                 $this->eventTable->delete($eventId);
                 $_SESSION['eventDeletionSuccess'] = true;
-                // header('location: /events/view');
+            
+                // Get the referring URL
+                $previousUrl = $_SERVER['HTTP_REFERER'];
+            
+                if (strpos($previousUrl, '/events/dashboard') !== false) {
+                    // Redirect to the dashboard if it is the previous page
+                    header('Location: /events/dashboard');
+                } else {
+                    // Redirect to events/view if it is not the dashboard
+                    header('Location: /events/view');
+                }
+            
                 exit();
             } else {
                 // Event not found, show an error message
                 $message = "Event not found.";
                 $_SESSION['errorMessage'] = $message;
-                // header('location: /events/view');
+                
+                // Redirect to events/view in case of an error
+                header('Location: /events/view');
                 exit();
             }
+            
         }
         header('location: /events/view');
         exit();
@@ -245,14 +261,14 @@ class EventController
     }
     public function search()
     {
-        $search = $_POST['search'] ?? '';  
-    
+        $search = $_POST['search'] ?? '';
+
         $results = [
             'events' => [],
             'categories' => [],
             'users' => []
         ];
-    
+
         if (!empty($search)) {
             $results['events'] = $this->viewEventDetails->searchEvents($search);
             $results['categories'] = $this->categoryTable->searchCategory($search);
@@ -262,12 +278,10 @@ class EventController
             $results['categories'] = $this->categoryTable->findAll();
             $results['users'] = $this->userTable->find('user_role', 'USER');
         }
-    
+
         // Return JSON response
         header('Content-Type: application/json');
         echo json_encode($results);
         exit;
     }
-    
-    
 }

@@ -1,7 +1,6 @@
 <?php
-
 namespace Controllers;
-
+require '../includes/error-message.php';
 class UsersController
 {
     private $userTable;
@@ -101,7 +100,7 @@ class UsersController
                 $message = 'Account exists already';
                 $_SESSION['errorMessage'] = $message;
                 return [
-                    'template' => 'user.php',
+                    'template' => 'register.php',
                     'variables' => ['message' => $message],
                     'title' => 'Save User - Eventify'
                 ];
@@ -114,7 +113,7 @@ class UsersController
                 $message = 'Password must be at least 8 characters long and contain at least one number';
                 $_SESSION['errorMessage'] = $message;
                 return [
-                    'template' => 'user.php',
+                    'template' => 'register.php',
                     'variables' => ['message' => $message],
                     'title' => 'Save User - Eventify',
                 ];
@@ -124,7 +123,7 @@ class UsersController
                 $message = 'Passwords don\'t match';
                 $_SESSION['errorMessage'] = $message;
                 return [
-                    'template' => 'user.php',
+                    'template' => 'register.php',
                     'variables' => ['message' => $message],
                     'title' => 'Save User - Eventify',
                 ];
@@ -186,9 +185,9 @@ class UsersController
                 $values['dateupdated'] = date('Y-m-d H:i');
                 $updated = $this->userTable->update($values);
 
-                if ($updated) {
+                if (!$updated) {
                     $_SESSION['userUpdateSuccess'] = true;
-                    header('Location: /users/view');
+                    header("Location: /users/view?userId=$userId");
                     exit;
                 } else {
                     $message = 'Failed to update user. Please try again.';
@@ -197,28 +196,34 @@ class UsersController
             } else {
                 $values['datecreated'] = date('Y-m-d H:i');
                 $inserted = $this->userTable->insert($values);
-
-                if ($inserted) {
+                if (!$inserted) {
                     $_SESSION['userCreationSuccess'] = true;
-                    header('Location: /users/view');
+                    
+                    // Check if userDetails are available in the session
+                    if (isset($_SESSION['userDetails'])) {
+                        header('Location: /events/dashboard');
+                    } else {
+                        header('Location: /users/logout');
+                    }
                     exit;
                 } else {
                     $message = 'Failed to create user. Please try again.';
                     $_SESSION['errorMessage'] = $message;
                 }
+                
             }
         }
 
         $user = $isUpdate ? [$existingUser] : null;
 
         return [
-            'template' => 'user.php',
+            'template' => 'register.php',
             'variables' => [
                 'currentDateTime' => $currentDateTime,
                 'user' => $user,
                 'message' => $message,
             ],
-            'title' => $isUpdate ? 'Edit User - Eventify' : 'Create User - Eventify',
+            'title' => $isUpdate ? 'Edit Account Details - Eventify' : 'Register - Eventify',
         ];
     }
     public function view()
@@ -289,15 +294,15 @@ class UsersController
             if (isset($_SESSION['userDetails']) && $_SESSION['userDetails']['user_role']) {
                 $currentUserRole = $_SESSION['userDetails']['user_role'];
             } else {
-                $currentUserRole = null;  // If no user role found, treat it as unauthorized
+                $currentUserRole = null; 
             }
 
             // Check if the user exists before attempting deletion
             $user = $this->userTable->find('userId', $userId);
 
             if ($user) {
-                $this->userTable->delete('userId', $userId);
-                $_SESSION['deleteSuccess'] = true;
+                $this->userTable->delete($userId);
+                $_SESSION['userDeletionSuccess'] = true;
 
                 // Redirect based on the current user's role
                 if ($currentUserRole === 'ADMIN') {
@@ -320,9 +325,7 @@ class UsersController
             header("Location: /users");
             exit();
         }
-    }
-
-    public function session()
+    }    public function session()
     {
         if (!isset($_SESSION)) {
             session_start();
