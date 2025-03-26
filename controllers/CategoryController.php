@@ -2,6 +2,8 @@
 
 namespace Controllers;
 
+require_once __DIR__ . '/BaseController.php';
+
 class CategoryController extends BaseController
 {
     private $categoryTable;

@@ -350,9 +350,6 @@ class UsersController
             $currentUserId = trim($_SESSION['userDetails']['userId']);
             $deletingUserId = trim($userId);
 
-            // Log the values to make sure we're getting correct data
-            // echo "<script>console.log('Current user ID: $currentUserId, Deleting user ID: $deletingUserId');</script>";
-
             if ($user) {
                 // Delete user
                 $this->userTable->delete($userId);
@@ -371,19 +368,16 @@ class UsersController
                 // Now, compare before performing the deletion
                 if ($currentUserId !== $deletingUserId) {
                     // If the current user is not deleting their own account, log the mismatch and redirect to the dashboard
-                    // echo "<script>console.log('User ID mismatch: Current user ID: $currentUserId, Deleting user ID: $deletingUserId');</script>";
                     $_SESSION['userDeletionSuccess'] = true;
                     header("Location: /events/dashboard");
                     exit();
                 } elseif ($currentUserId === $deletingUserId) {
                     // If the session user ID matches the user being deleted, log them out
-                    // echo "<script>console.log('User ID thesame: Current user ID: $currentUserId, Deleting user ID: $deletingUserId');</script>";
                     $_SESSION['userDeletionSuccess'] = true;
                     header("Location: /users/logout");
                     exit();
                 } else {
                     // Default logout if none of the conditions match
-                    // echo "<script>console.log('No conditions matched, logging out');</script>";
                     $_SESSION['userDeletionSuccess'] = true;
                     header("Location: /users/logout");
                     exit();

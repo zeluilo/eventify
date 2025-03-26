@@ -2,8 +2,8 @@
 
 namespace Controllers;
 
-// session_start();
-class EventController
+require_once __DIR__ . '/BaseController.php';
+class EventController extends BaseController
 {
     private $categoryTable;
     private $eventTable;
@@ -291,62 +291,4 @@ class EventController
         exit;
     }
 
-    public function startSession()
-    {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
-    }
-
-    public function checkLogin()
-    {
-        $this->startSession();
-
-        // If user is not logged in, redirect to login page
-        if (!isset($_SESSION['userDetails']) || empty($_SESSION['userDetails'])) {
-            $this->redirectToLogin();
-        }
-    }
-
-    public function checkAdmin()
-    {
-        $this->startSession();
-
-        // Ensure the user is logged in first
-        $this->checkLogin();
-
-        // Check if user is an admin
-        if (!isset($_SESSION['userDetails']['role']) || $_SESSION['userDetails']['role'] !== 'admin') {
-            $this->redirectToUserHome();
-        }
-    }
-
-    public function logout()
-    {
-        $this->startSession();
-
-        // Destroy all session data properly
-        $_SESSION = [];
-        session_unset();
-        session_destroy();
-
-        // Prevent session reuse
-        session_write_close();
-        setcookie(session_name(), '', time() - 3600, '/');
-
-        // Redirect to login page
-        $this->redirectToLogin();
-    }
-
-    private function redirectToLogin()
-    {
-        header("Location: /users/login");
-        exit();
-    }
-
-    private function redirectToUserHome()
-    {
-        header("Location: /users/home");
-        exit();
-    }
 }

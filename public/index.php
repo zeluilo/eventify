@@ -19,15 +19,40 @@ $controllers['events'] = new \Controllers\EventController($categoryTable, $event
 
 $route = ltrim(explode('?', $_SERVER['REQUEST_URI'])[0], '/');
 
-    if ($route == '') {
-        $page = $controllers['users']->home();
-    } else {
-        list($controllerName, $functionName) = explode('/', $route);
-        $controller = $controllers[$controllerName];
-        $page = $controller->$functionName();
-    }
+if ($route == '') {
+    $page = $controllers['users']->home();
+} else {
+    $parts = explode('/', $route);
+    $controllerName = $parts[0] ?? null;
+    $functionName = $parts[1] ?? null;
 
-    $output = loadTemplate('../pages/' . $page['template'], $page['variables']);
-    $title = $page['title'];
-    require '../pages/layout.php';
+    // Check if controller exists
+    if (!isset($controllers[$controllerName])) {
+        http_response_code(404);
+        $page = [
+            'template' => '404.php',
+            'title' => 'Page Not Found',
+            'variables' => []
+        ];
+    } else {
+        $controller = $controllers[$controllerName];
+
+        // Check if method exists in the controller
+        if (!method_exists($controller, $functionName)) {
+            http_response_code(404);
+            $page = [
+                'template' => '404.php',
+                'title' => 'Page Not Found',
+                'variables' => []
+            ];
+        } else {
+            $page = $controller->$functionName();
+        }
+    }
+}
+
+// Render page
+$output = loadTemplate('../pages/' . $page['template'], $page['variables']);
+$title = $page['title'];
+require '../pages/layout.php';
 

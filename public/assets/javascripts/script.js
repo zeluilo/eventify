@@ -51,7 +51,6 @@ function confirmDelete(event, itemId, itemType) {
         cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Redirect to the delete URL with the item ID
             window.location.href = deleteUrl;
         }
     });

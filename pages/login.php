@@ -25,7 +25,7 @@
       <label for="login_password">Password</label>
       <input type="password" id="login_password" name="password" required>
     </div>
-
+    <input type="checkbox" class="form-group" id="showPassword" onclick="togglePasswordVisibility()"> Show Password
     <div class="form-group submit-group">
       <button type="submit" name="submit">Sign In</button>
     </div>

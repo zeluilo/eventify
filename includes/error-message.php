@@ -12,6 +12,20 @@ if (isset($_SESSION['errorMessage']) && !empty($_SESSION['errorMessage'])) {
   unset($_SESSION['errorMessage']);
 }
 
+if (isset($_SESSION['loginSuccess']) && $_SESSION['loginSuccess'] === true) {
+  unset($_SESSION['loginSuccess']);
+  echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+          <script>
+            Swal.fire({
+                title: 'Welcome to Eventify!',
+                text: 'You have successfully logged in. Explore upcoming events now!',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+          </script>";
+}
+
 if (isset($_SESSION['categoryCreationSuccess']) && $_SESSION['categoryCreationSuccess'] === true) {
   unset($_SESSION['categoryCreationSuccess']);
   echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
@@ -50,7 +64,6 @@ if (isset($_SESSION['categoryDeletionSuccess']) && $_SESSION['categoryDeletionSu
       });
   </script>";
 }
-
 
 if (isset($_SESSION['eventUpdateSuccess']) && $_SESSION['eventUpdateSuccess'] === true) {
   unset($_SESSION['eventUpdateSuccess']);
@@ -121,7 +134,6 @@ if (isset($_SESSION['userCreationSuccess']) && $_SESSION['userCreationSuccess'] 
         });
     </script>";
 }
-
 
 if (isset($_SESSION['userDeletionSuccess']) && $_SESSION['userDeletionSuccess'] === true) {
   unset($_SESSION['userDeletionSuccess']);

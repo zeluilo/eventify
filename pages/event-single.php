@@ -20,7 +20,7 @@ $isUser = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === '
 $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 'ADMIN';
 
 // Check if the logged-in user is the creator of the event
-$isEventCreator = $isLoggedInOrRegistered && $_SESSION['userDetails']['userId'] === $event['userId'];
+$isEventCreator = $isLoggedInOrRegistered && $_SESSION['userDetails']['userId'] === $event['userid'];
 include '../includes/error-message.php';
 ?>
 
