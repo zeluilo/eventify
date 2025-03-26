@@ -28,16 +28,18 @@
                 <input type="email" id="email" name="email" value="<?php echo isset($user) ? htmlspecialchars($user['email']) : ''; ?>" required>
             </div>
             <?php if (isset($user) && $user['userId'] === $_SESSION['userDetails']['userId']): ?>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" value="<?php echo isset($user) && isset($user['password']) ? '' : ''; ?>" required>
-            </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" value="" required>
+                </div>
 
-            <div class="form-group">
-                <label for="repeat_password">Repeat Password</label>
-                <input type="password" id="repeat_password" name="repeat_password" value="<?php echo isset($user) && isset($user['password']) ? '' : ''; ?>" required>
-            </div>
-<?endif;?>
+                <div class="form-group">
+                    <label for="repeat_password">Repeat Password</label>
+                    <input type="password" id="repeat_password" name="repeat_password" value="" required>
+                </div>
+                    <input type="checkbox" class="form-group" id="showPassword" onclick="togglePasswordVisibility()"> Show Password
+            <?php endif; ?>
+
 
             <div class="form-group">
                 <label for="phone">Phone Number</label>

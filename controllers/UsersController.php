@@ -119,35 +119,60 @@ class UsersController
                 }
             }
 
-            // Handle password
-            $password = $_POST['password'];
-            $repeatPassword = $_POST['repeat_password'];
+            // Handle password change
+            $password = $_POST['password'] ?? '';
+            $repeatPassword = $_POST['repeat_password'] ?? '';
 
-            if (!empty($password)) {
-                if (strlen($password) < 8 || !preg_match('/\d/', $password)) {
-                    $message = 'Password must be at least 8 characters long and contain at least one number';
-                    $_SESSION['errorMessage'] = $message;
-                    return [
-                        'template' => 'register.php',
-                        'variables' => ['message' => $message],
-                        'title' => 'Save User - Eventify',
-                    ];
+            // Ensure session user ID matches before allowing password change
+            if (empty($password)) {
+                if ($_SESSION['userDetails']['userId'] !== $userId) {
+                    // If password is empty and session user ID ≠ updating user ID, retain old password
+                    $passwordHash = $existingUser['password'];
+                } else {
+                    // If user is updating their own account but left password empty, also retain old password
+                    $passwordHash = $existingUser['password'];
                 }
-
-                if ($password !== $repeatPassword) {
-                    $message = 'Passwords don\'t match';
-                    $_SESSION['errorMessage'] = $message;
-                    return [
-                        'template' => 'register.php',
-                        'variables' => ['message' => $message],
-                        'title' => 'Save User - Eventify',
-                    ];
-                }
-
-                $passwordHash = password_hash($password, PASSWORD_DEFAULT);
             } else {
-                // If password is empty, use the existing password
-                $passwordHash = $existingUser['password'];
+                // Validate and update password if it's not empty
+                if ($_SESSION['userDetails']['userId'] === $userId) {
+                    if (strlen($password) < 8 || !preg_match('/\d/', $password)) {
+                        $message = 'Password must be at least 8 characters long and contain at least one number';
+                        $_SESSION['errorMessage'] = $message;
+                        return [
+                            'template' => 'register.php',
+                            'variables' => ['message' => $message],
+                            'title' => 'Save User - Eventify',
+                        ];
+                    }
+
+                    if ($password !== $repeatPassword) {
+                        $message = 'Passwords don\'t match';
+                        $_SESSION['errorMessage'] = $message;
+                        return [
+                            'template' => 'register.php',
+                            'variables' => ['message' => $message],
+                            'title' => 'Save User - Eventify',
+                        ];
+                    }
+
+                    // Hash the new password
+                    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+                } else {
+                    // Unauthorized user cannot change password, retain existing password
+                    $passwordHash = $existingUser['password'];
+                }
+            }
+
+            function generateSecureId()
+            {
+                return bin2hex(random_bytes(16));
+            }
+
+            // Generate a secure ID if it's a new user
+            if (empty($existingUser['secure_id'])) {
+                $uuId = generateSecureId();
+            } else {
+                $uuId = $existingUser['uuId'];
             }
 
             // Prepare user data
@@ -157,6 +182,7 @@ class UsersController
                 'email' => $_POST['email'],
                 'password' => $passwordHash,
                 'phone' => $_POST['phone'],
+                'uuId' => $uuId,
             ];
 
             // Handle profile picture upload
@@ -196,8 +222,6 @@ class UsersController
                     $values['profile_pic'] = $profilePicName;
                 }
             }
-
-            // Update or create user
             if ($isUpdate) {
                 $values['userId'] = $userId;
                 $values['dateupdated'] = date('Y-m-d H:i');
@@ -205,7 +229,8 @@ class UsersController
 
                 // Fetch updated user details and update session
                 $updatedUser = $this->userTable->find('userId', $userId);
-                if (!empty($updatedUser)) {
+
+                if (!empty($updatedUser) && $_SESSION['userDetails']['userId'] === $updatedUser[0]['userId']) {
                     $_SESSION['userDetails'] = $updatedUser[0];
                 }
 
@@ -247,8 +272,6 @@ class UsersController
             'title' => $isUpdate ? 'Edit Account Details - Eventify' : 'Register - Eventify',
         ];
     }
-
-
     public function view()
     {
         // Check if 'userId' is set and not empty
@@ -275,7 +298,6 @@ class UsersController
             exit;
         }
     }
-
     public function login(): array
     {
         $show_message = '';
@@ -326,7 +348,6 @@ class UsersController
 
             if ($user) {
                 $this->userTable->delete($userId);
-                $_SESSION['userDeletionSuccess'] = true;
 
                 // Delete events related to the user
                 $events = $this->eventTable->find('userId', $userId);
@@ -340,11 +361,20 @@ class UsersController
                 }
 
                 // Redirect based on the current user's role
-                if ($currentUserRole === 'ADMIN') {
+                if ($currentUserRole === 'ADMIN' && $_SESSION['userDetails']['userId'] !== $userId) {
+                    // If the current user is an admin and is not deleting their own account, redirect to dashboard
                     header("Location: /events/dashboard");
+                    $_SESSION['userDeletionSuccess'] = true;
                     exit();
-                } elseif ($currentUserRole === 'USER') {
+                } elseif ($_SESSION['userDetails']['userId'] === $userId) {
+                    // If the session user ID matches the user being deleted, log them out
                     header("Location: /users/logout");
+                    $_SESSION['userDeletionSuccess'] = true;
+                    exit();
+                } else {
+                    // Default logout if none of the conditions match
+                    header("Location: /users/logout");
+                    $_SESSION['userDeletionSuccess'] = true;
                     exit();
                 }
             } else {
@@ -361,20 +391,12 @@ class UsersController
             exit();
         }
     }
-    public function session()
-    {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
-    }
-
     public function startSession()
     {
         if (!isset($_SESSION)) {
             session_start();
         }
     }
-
     public function checkLogin()
     {
         $this->startSession();
@@ -383,8 +405,6 @@ class UsersController
             $this->redirectToLogin();
         }
     }
-
-
     public function logout()
     {
         $this->startSession();
@@ -396,7 +416,6 @@ class UsersController
 
         $this->redirectToLogin();
     }
-
     private function redirectToLogin()
     {
         header("Location: /users/login");

@@ -1,6 +1,4 @@
-<?php
-include '../includes/error-message.php';
-?>
+<?php include '../includes/error-message.php'; ?>
 
 <section id="home" class="home section dark-background">
 

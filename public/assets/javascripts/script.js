@@ -87,6 +87,18 @@ function formatDate(eventDate) {
     });
 }
 
+function togglePasswordVisibility() {
+    let password = document.getElementById("password");
+    let repeatPassword = document.getElementById("repeat_password");
+    if (password.type === "password") {
+        password.type = "text";
+        repeatPassword.type = "text";
+    } else {
+        password.type = "password";
+        repeatPassword.type = "password";
+    }
+}
+
 // ==============================
 // Live Event Search (AJAX Filtering)
 // ==============================
