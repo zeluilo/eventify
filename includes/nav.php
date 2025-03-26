@@ -43,7 +43,8 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
             <?php if (isset($_SESSION['userDetails'])) : ?>
                 <?php $userDetails = $_SESSION['userDetails']; ?>
                 <a class="dropdown-toggle" href="#">
-                    <img class="user-avatar" src="../assets/images/profile.png" alt="User Avatar">
+                    <img class="user-avatar" src="<?php echo !empty($userDetails['profile_pic']) ? '../images/profile_pics/' . $userDetails['profile_pic'] : '../assets/images/profile.png'; ?>" 
+                    alt="User Avatar">
                 </a>
                 <ul class="user-dropdown-menu">
                     <li>
@@ -53,6 +54,7 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
                     </li>
                     <div class="dropdown-divider"></div>
                     <li>
+                        
                         <a class="dropdown-item" href="/users/view?userId=<?php echo $userDetails['userId'] ?>">
                             Profile
                         </a>

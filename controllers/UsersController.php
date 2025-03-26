@@ -1,13 +1,16 @@
 <?php
+
 namespace Controllers;
-require '../includes/error-message.php';
+
 class UsersController
 {
     private $userTable;
+    private $eventTable;
 
-    public function __construct($userTable)
+    public function __construct($userTable, $eventTable)
     {
         $this->userTable = $userTable;
+        $this->eventTable = $eventTable;
     }
 
     public function home()
@@ -17,11 +20,11 @@ class UsersController
         $loggedoutSuccess = false;
 
         // // Check if registration success session variable is set
-        if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess']) {
-            // Unset the session variable to avoid displaying the modal on subsequent requests
-            unset($_SESSION['registrationSuccess']);
-            $registrationSuccess = true;
-        }
+        // if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess']) {
+        //     // Unset the session variable to avoid displaying the modal on subsequent requests
+        //     unset($_SESSION['registrationSuccess']);
+        //     $registrationSuccess = true;
+        // }
 
         // // Check if login success session variable is set
         // if (isset($_SESSION['loginSuccess']) && $_SESSION['loginSuccess']) {
@@ -74,7 +77,6 @@ class UsersController
     public function save(): array
     {
         $message = '';
-        $currentDateTime = date('Y-m-d\TH:i');
 
         // Check if updating or creating a user
         $userId = $_POST['userId'] ?? ($_GET['userId'] ?? null);
@@ -96,49 +98,65 @@ class UsersController
             // Validate email
             $email = $_POST['email'];
             $existingEmail = $this->userTable->find('email', $email);
-            if (!empty($existingEmail) && (!$userId || $existingEmail['userId'] != $userId)) {
-                $message = 'Account exists already';
-                $_SESSION['errorMessage'] = $message;
-                return [
-                    'template' => 'register.php',
-                    'variables' => ['message' => $message],
-                    'title' => 'Save User - Eventify'
-                ];
+
+            // If an email is found
+            if (!empty($existingEmail)) {
+                // Get the first matching record
+                $existingEmail = $existingEmail[0];
+
+                // Allow if the found email belongs to the current user
+                if ($isUpdate && $existingEmail['userId'] == $userId) {
+                    // Email belongs to the current user, proceed with saving
+                } else {
+                    // Email belongs to another user, reject it
+                    $message = 'Account exists already';
+                    $_SESSION['errorMessage'] = $message;
+                    return [
+                        'template' => 'register.php',
+                        'variables' => ['message' => $message],
+                        'title' => 'Save User - Eventify'
+                    ];
+                }
             }
 
-            // Validate password
+            // Handle password
             $password = $_POST['password'];
             $repeatPassword = $_POST['repeat_password'];
-            if (strlen($password) < 8 || !preg_match('/\d/', $password)) {
-                $message = 'Password must be at least 8 characters long and contain at least one number';
-                $_SESSION['errorMessage'] = $message;
-                return [
-                    'template' => 'register.php',
-                    'variables' => ['message' => $message],
-                    'title' => 'Save User - Eventify',
-                ];
-            }
 
-            if ($password !== $repeatPassword) {
-                $message = 'Passwords don\'t match';
-                $_SESSION['errorMessage'] = $message;
-                return [
-                    'template' => 'register.php',
-                    'variables' => ['message' => $message],
-                    'title' => 'Save User - Eventify',
-                ];
-            }
+            if (!empty($password)) {
+                if (strlen($password) < 8 || !preg_match('/\d/', $password)) {
+                    $message = 'Password must be at least 8 characters long and contain at least one number';
+                    $_SESSION['errorMessage'] = $message;
+                    return [
+                        'template' => 'register.php',
+                        'variables' => ['message' => $message],
+                        'title' => 'Save User - Eventify',
+                    ];
+                }
 
-            $pw = password_hash($password, PASSWORD_DEFAULT);
+                if ($password !== $repeatPassword) {
+                    $message = 'Passwords don\'t match';
+                    $_SESSION['errorMessage'] = $message;
+                    return [
+                        'template' => 'register.php',
+                        'variables' => ['message' => $message],
+                        'title' => 'Save User - Eventify',
+                    ];
+                }
+
+                $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            } else {
+                // If password is empty, use the existing password
+                $passwordHash = $existingUser['password'];
+            }
 
             // Prepare user data
             $values = [
                 'first_name' => $_POST['first_name'],
                 'last_name' => $_POST['last_name'],
                 'email' => $_POST['email'],
-                'password' => $pw,
+                'password' => $passwordHash,
                 'phone' => $_POST['phone'],
-                'user_role' => $_POST['user_role'] ?? 'USER',
             ];
 
             // Handle profile picture upload
@@ -185,6 +203,12 @@ class UsersController
                 $values['dateupdated'] = date('Y-m-d H:i');
                 $updated = $this->userTable->update($values);
 
+                // Fetch updated user details and update session
+                $updatedUser = $this->userTable->find('userId', $userId);
+                if (!empty($updatedUser)) {
+                    $_SESSION['userDetails'] = $updatedUser[0];
+                }
+
                 if (!$updated) {
                     $_SESSION['userUpdateSuccess'] = true;
                     header("Location: /users/view?userId=$userId");
@@ -197,12 +221,12 @@ class UsersController
                 $values['datecreated'] = date('Y-m-d H:i');
                 $inserted = $this->userTable->insert($values);
                 if (!$inserted) {
-                    $_SESSION['userCreationSuccess'] = true;
-                    
                     // Check if userDetails are available in the session
                     if (isset($_SESSION['userDetails'])) {
+                        $_SESSION['userCreationSuccess'] = true;
                         header('Location: /events/dashboard');
                     } else {
+                        $_SESSION['registrationSuccess'] = true;
                         header('Location: /users/logout');
                     }
                     exit;
@@ -210,48 +234,48 @@ class UsersController
                     $message = 'Failed to create user. Please try again.';
                     $_SESSION['errorMessage'] = $message;
                 }
-                
             }
         }
-
         $user = $isUpdate ? [$existingUser] : null;
 
         return [
             'template' => 'register.php',
             'variables' => [
-                'currentDateTime' => $currentDateTime,
-                'user' => $user,
+                'user' => $user[0],
                 'message' => $message,
             ],
             'title' => $isUpdate ? 'Edit Account Details - Eventify' : 'Register - Eventify',
         ];
     }
+
+
     public function view()
     {
+        // Check if 'userId' is set and not empty
         if (isset($_GET['userId']) && !empty($_GET['userId'])) {
             $userId = $_GET['userId'];
             $user = $this->userTable->find('userId', $userId);
 
-            return [
-                'template' => 'profile.php',
-                'variables' => [
-                    'user' => $user[0],
-                ],
-                'title' => 'View Profile - Eventify'
-            ];
+            if ($user && !empty($user)) {
+                return [
+                    'template' => 'profile.php',
+                    'variables' => [
+                        'user' => $user[0],
+                    ],
+                    'title' => 'View Profile - Eventify'
+                ];
+            } else {
+                $_SESSION['errorMessage'] = 'User not found. Please try again.';
+                header('Location: /users/dashboard');
+                exit;
+            }
         } else {
-            // If no specific userId is provided, show all users in the event menu
-            $users = $this->userTable->findAll();
-
-            return [
-                'template' => 'event-menu.php',
-                'variables' => [
-                    'users' => $users,
-                ],
-                'title' => 'Event Menu - Eventify'
-            ];
+            $_SESSION['errorMessage'] = 'Invalid user ID. Please try again.';
+            header('Location: /users/dashboard');
+            exit;
         }
     }
+
     public function login(): array
     {
         $show_message = '';
@@ -294,7 +318,7 @@ class UsersController
             if (isset($_SESSION['userDetails']) && $_SESSION['userDetails']['user_role']) {
                 $currentUserRole = $_SESSION['userDetails']['user_role'];
             } else {
-                $currentUserRole = null; 
+                $currentUserRole = null;
             }
 
             // Check if the user exists before attempting deletion
@@ -303,6 +327,17 @@ class UsersController
             if ($user) {
                 $this->userTable->delete($userId);
                 $_SESSION['userDeletionSuccess'] = true;
+
+                // Delete events related to the user
+                $events = $this->eventTable->find('userId', $userId);
+                if ($events) {
+                    foreach ($events as $event) {
+                        $this->eventTable->delete($event['eventId']);
+                    }
+                } else {
+                    // Log if no events are found for the user
+                    error_log("No events found for user ID: " . $userId);
+                }
 
                 // Redirect based on the current user's role
                 if ($currentUserRole === 'ADMIN') {
@@ -325,7 +360,8 @@ class UsersController
             header("Location: /users");
             exit();
         }
-    }    public function session()
+    }
+    public function session()
     {
         if (!isset($_SESSION)) {
             session_start();

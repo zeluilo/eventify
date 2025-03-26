@@ -38,6 +38,20 @@ if (isset($_SESSION['categoryUpdateSuccess']) && $_SESSION['categoryUpdateSucces
   </script>";
 }
 
+if (isset($_SESSION['categoryDeletionSuccess']) && $_SESSION['categoryDeletionSuccess'] === true) {
+  unset($_SESSION['categoryDeletionSuccess']);
+  echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+  <script>
+      Swal.fire({
+          title: 'Category Deleted Successfully!',
+          text: 'The event category has been deleted from the system.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+      });
+  </script>";
+}
+
+
 if (isset($_SESSION['eventUpdateSuccess']) && $_SESSION['eventUpdateSuccess'] === true) {
   unset($_SESSION['eventUpdateSuccess']);
   echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
@@ -94,6 +108,20 @@ if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess'] 
           });
         </script>";
 }
+
+if (isset($_SESSION['userCreationSuccess']) && $_SESSION['userCreationSuccess'] === true) {
+  unset($_SESSION['userCreationSuccess']);
+  echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+    <script>
+        Swal.fire({
+            title: 'User Created Successfully!',
+            text: 'The user account has been successfully created.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    </script>";
+}
+
 
 if (isset($_SESSION['userDeletionSuccess']) && $_SESSION['userDeletionSuccess'] === true) {
   unset($_SESSION['userDeletionSuccess']);

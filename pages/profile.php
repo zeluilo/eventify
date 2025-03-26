@@ -5,13 +5,23 @@ $isLoggedInOrRegistered = isset($_SESSION['userDetails']);
 // Check if the logged-in user's checkAdmin is "USER"
 $isUser = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 'USER';
 $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 'ADMIN';
+include '../includes/error-message.php';
 ?>
+
+
+<section id="home" class="home section dark-background">
+    <div class="home-content">
+        <h2>Edit Profile Details</h2>
+        <p>Update your personal information and preferences.</p>
+    </div>
+</section>
 
 <section class="event-section">
     <div class="event-details-container">
 
         <div class="event-image-wrapper">
-            <img src="<?php echo !empty($user['image']) ? '../images/events/' . $user['image'] : '../assets/images/profile.png'; ?>" alt="User Profile Image" class="event-image">
+            <img src="<?php echo !empty($user['profile_pic']) ? '../images/profile_pics/' . $user['profile_pic'] : '../assets/images/profile.png'; ?>"
+             alt="User Profile Image" class="event-image">
         </div>
 
 
@@ -57,9 +67,9 @@ $isAdmin = $isLoggedInOrRegistered && $_SESSION['userDetails']['user_role'] === 
             <?php if ($isAdmin || $isUser) : ?>
 
                 <div class="event-actions">
-                    <a href="/events/save?eventId=<?php echo $user['userId']; ?>" class="btn btn-edit">Edit Account</a>
+                    <a href="/users/save?userId=<?php echo $user['userId']; ?>" class="btn btn-edit">Edit Account</a>
                     <a href="#" class="btn btn-delete"
-                        onclick="confirmDelete(event, <?php echo $user['userId']; ?>, 'users')">
+                        onclick="confirmDelete(event, <?php echo $user['userId']; ?>, 'user')">
                         Delete Account
                     </a>
                 </div>

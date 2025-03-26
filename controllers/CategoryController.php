@@ -7,7 +7,6 @@ class CategoryController
     private $categoryTable;
     private $eventTable;
 
-
     public function __construct($categoryTable, $eventTable)
     {
         $this->categoryTable = $categoryTable;

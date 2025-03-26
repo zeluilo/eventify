@@ -1080,18 +1080,20 @@ section,
 .event-details-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
   gap: 2rem;
   width: 100%;
+  align-items: center;
 }
 
 .event-image-wrapper {
-  flex: 1 1 40%; 
+  flex: 1 1 45%; 
   max-width: 100%;
+  text-align: center;
 }
 
 .event-image {
-  width: 90%;
+  width: 70%;
   height: 500px;
 }
 

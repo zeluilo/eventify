@@ -13,7 +13,7 @@ $eventTable = new DatabaseTable($pdo, 'events', 'eventId');
 $viewEventDetails = new DatabaseTable($pdo, 'view_event_details', 'eventId');
 
 $controllers = [];
-$controllers['users'] = new \Controllers\UsersController($userTable);
+$controllers['users'] = new \Controllers\UsersController($userTable, $eventTable);
 $controllers['category'] = new \Controllers\CategoryController($categoryTable, $eventTable);
 $controllers['events'] = new \Controllers\EventController($categoryTable, $eventTable, $userTable, $viewEventDetails);
 
