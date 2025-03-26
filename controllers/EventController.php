@@ -22,6 +22,8 @@ class EventController
     public function dashboard()
     {
 
+        $this->checkAdmin();
+
         $categories = $this->categoryTable->findAll();
         $events = $this->viewEventDetails->findAll();
         $users = $this->userTable->find('user_role', 'USER');
@@ -66,6 +68,7 @@ class EventController
     }
     public function fetchEventDetails()
     {
+
         if (isset($_GET['eventId']) && !empty($_GET['eventId'])) {
             $eventId = $_GET['eventId'];
             $event = $this->viewEventDetails->find('eventId', $eventId);
@@ -96,6 +99,7 @@ class EventController
     }
     public function save(): array
     {
+        $this->checkLogin();
         $category = $this->categoryTable->findAll();
         $events = $this->eventTable->findAll();
         $currentDateTime = date('Y-m-d\TH:i');
@@ -194,6 +198,7 @@ class EventController
     }
     public function delete(): array
     {
+        $this->checkLogin();
         $message = '';
         if (isset($_GET['eventId'])) {
             $eventId = $_GET['eventId'];
@@ -202,10 +207,10 @@ class EventController
                 // Delete the event if it exists
                 $this->eventTable->delete($eventId);
                 $_SESSION['eventDeletionSuccess'] = true;
-            
+
                 // Get the referring URL
                 $previousUrl = $_SERVER['HTTP_REFERER'];
-            
+
                 if (strpos($previousUrl, '/events/dashboard') !== false) {
                     // Redirect to the dashboard if it is the previous page
                     header('Location: /events/dashboard');
@@ -213,18 +218,17 @@ class EventController
                     // Redirect to events/view if it is not the dashboard
                     header('Location: /events/view');
                 }
-            
+
                 exit();
             } else {
                 // Event not found, show an error message
                 $message = "Event not found.";
                 $_SESSION['errorMessage'] = $message;
-                
+
                 // Redirect to events/view in case of an error
                 header('Location: /events/view');
                 exit();
             }
-            
         }
         header('location: /events/view');
         exit();
@@ -232,6 +236,7 @@ class EventController
 
     public function filter()
     {
+
         $search = $_POST['search'] ?? '';
         $category = $_POST['category'] ?? '';
 
@@ -261,6 +266,7 @@ class EventController
     }
     public function search()
     {
+        $this->checkAdmin();
         $search = $_POST['search'] ?? '';
 
         $results = [
@@ -283,5 +289,64 @@ class EventController
         header('Content-Type: application/json');
         echo json_encode($results);
         exit;
+    }
+
+    public function startSession()
+    {
+        if (!isset($_SESSION)) {
+            session_start();
+        }
+    }
+
+    public function checkLogin()
+    {
+        $this->startSession();
+
+        // If user is not logged in, redirect to login page
+        if (!isset($_SESSION['userDetails']) || empty($_SESSION['userDetails'])) {
+            $this->redirectToLogin();
+        }
+    }
+
+    public function checkAdmin()
+    {
+        $this->startSession();
+
+        // Ensure the user is logged in first
+        $this->checkLogin();
+
+        // Check if user is an admin
+        if (!isset($_SESSION['userDetails']['role']) || $_SESSION['userDetails']['role'] !== 'admin') {
+            $this->redirectToUserHome();
+        }
+    }
+
+    public function logout()
+    {
+        $this->startSession();
+
+        // Destroy all session data properly
+        $_SESSION = [];
+        session_unset();
+        session_destroy();
+
+        // Prevent session reuse
+        session_write_close();
+        setcookie(session_name(), '', time() - 3600, '/');
+
+        // Redirect to login page
+        $this->redirectToLogin();
+    }
+
+    private function redirectToLogin()
+    {
+        header("Location: /users/login");
+        exit();
+    }
+
+    private function redirectToUserHome()
+    {
+        header("Location: /users/home");
+        exit();
     }
 }

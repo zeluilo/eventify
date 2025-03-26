@@ -21,7 +21,7 @@ include '../includes/error-message.php';
 
         <div class="event-image-wrapper">
             <img src="<?php echo !empty($user['profile_pic']) ? '../images/profile_pics/' . $user['profile_pic'] : '../assets/images/profile.png'; ?>"
-             alt="User Profile Image" class="event-image">
+                alt="User Profile Image" class="event-image">
         </div>
 
 
@@ -64,16 +64,19 @@ include '../includes/error-message.php';
                     </tr>
                 <? endif; ?>
             </table>
-            <?php if ($isAdmin || $isUser) : ?>
+            <?php if ($isUser || $isAdmin) :
+            ?>
 
                 <div class="event-actions">
                     <a href="/users/save?userId=<?php echo $user['userId']; ?>" class="btn btn-edit">Edit Account</a>
-                    <a href="#" class="btn btn-delete"
-                        onclick="confirmDelete(event, <?php echo $user['userId']; ?>, 'user')">
-                        Delete Account
-                    </a>
+                        <a href="#" class="btn btn-delete"
+                            onclick="confirmDelete(event, <?php echo $user['userId']; ?>, 'user')">
+                            Delete Account
+                        </a>
                 </div>
-            <? endif; ?>
+
+            <?php endif; ?>
+
 
         </div>
 

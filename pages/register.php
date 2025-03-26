@@ -30,8 +30,8 @@
 
             <!-- Password Field -->
             <?php
-            // Check if the user is logged in and is not an admin
-            if (isset($user) && $user['userId'] === $_SESSION['userDetails']['userId'] && $_SESSION['userDetails']['role'] !== 'ADMIN'): ?>
+            // Check if 'userDetails' is set in the session before accessing it
+            if (isset($_SESSION['userDetails']) && isset($user) && $user['userId'] === $_SESSION['userDetails']['userId']) : ?>
                 <!-- For the logged-in user (who is not an admin), the password fields are enabled -->
                 <div class="form-group">
                     <label for="password">Password</label>
@@ -43,8 +43,8 @@
                     <input type="password" id="repeat_password" name="repeat_password" value="" required>
                 </div>
                 <input type="checkbox" class="form-group" id="showPassword" onclick="togglePasswordVisibility()"> Show Password
-            <?php elseif ($_SESSION['userDetails'] === null): ?>
-                <!-- If session is null, show editable password fields -->
+            <?php elseif (!isset($_SESSION['userDetails'])) : ?>
+                <!-- If session is not set, show editable password fields -->
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" value="" required>
@@ -55,7 +55,7 @@
                     <input type="password" id="repeat_password" name="repeat_password" value="" required>
                 </div>
                 <input type="checkbox" class="form-group" id="showPassword" onclick="togglePasswordVisibility()"> Show Password
-            <?php elseif ($_SESSION['userDetails']['role'] === 'ADMIN'): ?>
+            <?php else : ?>
                 <!-- If the user is an admin, disable the password fields -->
                 <div class="form-group">
                     <label for="password">Password</label>
