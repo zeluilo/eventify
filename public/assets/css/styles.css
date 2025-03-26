@@ -1087,7 +1087,7 @@ section,
 }
 
 .event-image-wrapper {
-  flex: 1 1 45%; 
+  flex: 1 1 40%; 
   max-width: 100%;
   text-align: center;
 }

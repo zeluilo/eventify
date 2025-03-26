@@ -30,6 +30,6 @@
       <button type="submit" name="submit">Sign In</button>
     </div>
 
-    <p class="form-link">Don’t have an account? <a href="/users/register">Register here</a></p>
+    <p class="form-link">Don’t have an account? <a href="/users/save">Register here</a></p>
   </form>
 </div>

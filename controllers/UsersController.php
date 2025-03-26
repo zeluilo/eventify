@@ -15,6 +15,8 @@ class UsersController
 
     public function home()
     {
+        $this->checkLogin();
+
         $registrationSuccess = false;
         $loggedinSuccess = false;
         $loggedoutSuccess = false;
@@ -134,7 +136,7 @@ class UsersController
                 }
             } else {
                 // Validate and update password if it's not empty
-                if ($_SESSION['userDetails']['userId'] === $userId) {
+                if (isset($_SESSION['userDetails']) && $_SESSION['userDetails']['userId'] === $userId) {
                     if (strlen($password) < 8 || !preg_match('/\d/', $password)) {
                         $message = 'Password must be at least 8 characters long and contain at least one number';
                         $_SESSION['errorMessage'] = $message;
@@ -158,8 +160,20 @@ class UsersController
                     // Hash the new password
                     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
                 } else {
-                    // Unauthorized user cannot change password, retain existing password
-                    $passwordHash = $existingUser['password'];
+                    // Ensure $existingUser is set and has the 'password' key before accessing
+                    if (isset($existingUser) && isset($existingUser['password'])) {
+                        // Unauthorized user cannot change password, retain existing password
+                        $passwordHash = $existingUser['password'];
+                    } else {
+                        // Handle case where $existingUser is not set or doesn't have the password key
+                        $message = 'User data is not available, unable to retain password';
+                        $_SESSION['errorMessage'] = $message;
+                        return [
+                            'template' => 'register.php',
+                            'variables' => ['message' => $message],
+                            'title' => 'Save User - Eventify',
+                        ];
+                    }
                 }
             }
 
@@ -243,7 +257,8 @@ class UsersController
                     $_SESSION['errorMessage'] = $message;
                 }
             } else {
-                $values['datecreated'] = date('Y-m-d H:i');
+                $values['datecreated'] = date(format: 'Y-m-d H:i');
+                $values['user_role'] = 'USER';
                 $inserted = $this->userTable->insert($values);
                 if (!$inserted) {
                     // Check if userDetails are available in the session
@@ -252,7 +267,6 @@ class UsersController
                         header('Location: /events/dashboard');
                     } else {
                         $_SESSION['registrationSuccess'] = true;
-                        header('Location: /users/logout');
                     }
                     exit;
                 } else {
@@ -266,7 +280,7 @@ class UsersController
         return [
             'template' => 'register.php',
             'variables' => [
-                'user' => $user[0],
+                'user' => $user ? $user[0] : null,
                 'message' => $message,
             ],
             'title' => $isUpdate ? 'Edit Account Details - Eventify' : 'Register - Eventify',
@@ -361,8 +375,8 @@ class UsersController
                 }
 
                 // Redirect based on the current user's role
-                if ($currentUserRole === 'ADMIN' && $_SESSION['userDetails']['userId'] !== $userId) {
-                    // If the current user is an admin and is not deleting their own account, redirect to dashboard
+                if ($_SESSION['userDetails']['userId'] !== $userId) {
+                    // If the current user is not deleting their own account, redirect to dashboard
                     header("Location: /events/dashboard");
                     $_SESSION['userDeletionSuccess'] = true;
                     exit();
@@ -401,21 +415,31 @@ class UsersController
     {
         $this->startSession();
 
-        if (!isset($_SESSION['userDetails']['user_role'])) {
+        if (!isset($_SESSION['userDetails'])) {
             $this->redirectToLogin();
         }
     }
     public function logout()
     {
+        // Start session if not already started
         $this->startSession();
-
+    
+        // Optionally clear user details before ending the session
+        $_SESSION['userDetails'] = null;
+    
+        // Unset all session variables
         session_unset();
+    
+        // Destroy the session
         session_destroy();
-
+    
+        // Set a logout success flag to show a message or do further actions
         $_SESSION['loggedout'] = true;
-
+    
+        // Redirect to login page
         $this->redirectToLogin();
     }
+    
     private function redirectToLogin()
     {
         header("Location: /users/login");
