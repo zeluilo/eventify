@@ -38,10 +38,10 @@
               <td> <?= htmlspecialchars($user['user_role']) ?> </td>
               <td> <?= htmlspecialchars(date('F j, Y', strtotime($user['datecreated']))) ?> </td>
               <td>
-                <a class="edit-btn" href="/users/view?userId=<?= $user['userId'] ?>">
+                <a class="edit-btn" href="/users/view?uuId=<?= $user['uuId'] ?>">
                   <span class="material-icons-outlined">edit</span>
                 </a>
-                <a class="delete-btn" onclick="confirmDelete(event, <?php echo $user['userId']; ?>, 'user')">
+                <a class="delete-btn" onclick="confirmDelete(event, <?php echo $user['uuId']; ?>, 'user')">
                   <span class="material-icons-outlined">delete</span>
                 </a>
               </td>

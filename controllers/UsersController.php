@@ -17,31 +17,73 @@ class UsersController extends BaseController
 
     public function home()
     {
-        $registrationSuccess = false;
-        $loggedinSuccess = false;
-        $loggedoutSuccess = isset($_SESSION['loggedout']) ? $_SESSION['loggedout'] : false;
-
-        if ($loggedoutSuccess) {
-            unset($_SESSION['loggedout']);
+        // Ensure $events is always an array
+        $events = $this->eventTable->findAll() ;
+        if (!is_array($events)) {
+            $events = [];
         }
-
-        // Replace render with return
+    
+        // Get current date
+        $currentDate = date('Y-m-d');
+    
+        // Categorize events
+        $upcomingEvents = [];
+        $ongoingEvents = [];
+        $pastEvents = [];
+    
+        foreach ($events as $event) {
+            if (!isset($event['event_date'])) {
+                continue; // Skip if event date is missing
+            }
+    
+            $eventDate = date('Y-m-d', strtotime($event['event_date']));
+            $daysSinceEvent = (strtotime($currentDate) - strtotime($eventDate)) / (60 * 60 * 24);
+            if ($eventDate > $currentDate) {
+                $upcomingEvents[] = $event; // Future event
+            } elseif ($daysSinceEvent >= 0 && $daysSinceEvent <= 10) {
+                $ongoingEvents[] = $event; // Ongoing event within 10 days
+            } else {
+                $pastEvents[] = $event; // Past event
+            }          
+        }
+    
+        // Ensure these are arrays (not null)
+        $upcomingEvents = is_array($upcomingEvents) ? $upcomingEvents : [];
+        $ongoingEvents = is_array($ongoingEvents) ? $ongoingEvents : [];
+        $pastEvents = is_array($pastEvents) ? $pastEvents : [];
+    
+        // Sort each category only if they are not empty
+        if (!empty($upcomingEvents)) {
+            usort($upcomingEvents, fn($a, $b) => strtotime($a['event_date']) - strtotime($b['event_date']));
+        }
+        if (!empty($ongoingEvents)) {
+            usort($ongoingEvents, fn($a, $b) => strtotime($a['event_date']) - strtotime($b['event_date']));
+        }
+        if (!empty($pastEvents)) {
+            usort($pastEvents, fn($a, $b) => strtotime($b['event_date']) - strtotime($a['event_date'])); // Descending order
+        }
+    
+        // Limit each category to 8 events
+        $upcomingEvents = array_slice($upcomingEvents, 0, 8);
+        $ongoingEvents = array_slice($ongoingEvents, 0, 8);
+        $pastEvents = array_slice($pastEvents, 0, 8);
+    
         return [
-            'template' => 'home.php',
+            'template' => 'client/home.php',
             'title' => 'Eventify - Discover Events',
             'variables' => [
-                'registrationSuccess' => $registrationSuccess,
-                'loggedinSuccess' => $loggedinSuccess,
-                'loggedoutSuccess' => $loggedoutSuccess,
+                'upcomingEvents' => $upcomingEvents,
+                'ongoingEvents' => $ongoingEvents,
+                'pastEvents' => $pastEvents
             ]
         ];
     }
     public function save(): array
     {
         $message = '';
-        $userId = $_POST['userId'] ?? ($_GET['userId'] ?? null);
-        $isUpdate = !empty($userId);
-        $existingUser = $isUpdate ? $this->userTable->find('userId', $userId)[0] : null;
+        $uuId = $_POST['uuId'] ?? ($_GET['uuId'] ?? null);
+        $isUpdate = !empty($uuId);
+        $existingUser = $isUpdate ? $this->userTable->find('uuId', $uuId)[0] ?? null : null;
 
         if (isset($_POST['submit'])) {
             $email = $_POST['email'];
@@ -53,13 +95,13 @@ class UsersController extends BaseController
                 $existingEmail = $existingEmail[0];
 
                 // Allow if the found email belongs to the current user
-                if ($isUpdate && $existingEmail['userId'] == $userId) {
+                if ($isUpdate && $existingEmail['uuId'] === $uuId) {
                     // Email belongs to the current user, proceed with saving
                 } else {
                     // Email belongs to another user, reject it
                     $this->handleError('Account exists already');
                     return [
-                        'template' => 'register.php',
+                        'template' => 'auth/register.php',
                         'variables' => ['message' => $message],
                         'title' => 'Save User - Eventify'
                     ];
@@ -71,7 +113,7 @@ class UsersController extends BaseController
 
             // Ensure session user ID matches before allowing password change
             if (empty($password)) {
-                if ($_SESSION['userDetails']['userId'] !== $userId) {
+                if ($_SESSION['userDetails']['uuId'] !== $uuId) {
                     // If password is empty and session user ID ≠ updating user ID, retain old password
                     $passwordHash = $existingUser['password'];
                 } else {
@@ -80,11 +122,11 @@ class UsersController extends BaseController
                 }
             } else {
                 // Validate and update password if it's not empty
-                if (isset($_SESSION['userDetails']) && $_SESSION['userDetails']['userId'] === $userId) {
+                if (isset($_SESSION['userDetails']) && $_SESSION['userDetails']['uuId'] === $uuId) {
                     $passwordHash = $this->handlePassword($existingUser, $password, $repeatPassword);
                     if (!$passwordHash) {
                         return [
-                            'template' => 'register.php',
+                            'template' => 'auth/register.php',
                             'variables' => ['message' => $_SESSION['errorMessage']],
                             'title' => 'Save User - Eventify',
                         ];
@@ -93,7 +135,7 @@ class UsersController extends BaseController
                     $passwordHash = $this->handlePassword($existingUser, $password, $repeatPassword);
                     if (!$passwordHash) {
                         return [
-                            'template' => 'register.php',
+                            'template' => 'auth/register.php',
                             'variables' => ['message' => $_SESSION['errorMessage']],
                             'title' => 'Save User - Eventify',
                         ];
@@ -101,7 +143,7 @@ class UsersController extends BaseController
                 }
             }
 
-            $uuId = empty($existingUser['secure_id']) ? bin2hex(random_bytes(16)) : $existingUser['uuId'];
+            $uuId = empty($existingUser['uuId']) ? bin2hex(random_bytes(16)) : $existingUser['uuId'];
 
             $values = [
                 'first_name' => $_POST['first_name'],
@@ -112,10 +154,10 @@ class UsersController extends BaseController
                 'uuId' => $uuId,
                 'profile_pic' => $this->handleProfilePicture($existingUser['profile_pic'] ?? null),
             ];
-
+            $userId = $existingEmail['uuId'];
             // Call the updateUser or createUser method without expecting a return value
             if ($isUpdate) {
-                $this->updateUser($userId, $values); // No return expected
+                $this->updateUser($uuId, $userId, $values);
             } else {
                 $this->createUser($values); // No return expected
             }
@@ -123,7 +165,7 @@ class UsersController extends BaseController
         $user = $isUpdate ? [$existingUser] : null;
 
         return [
-            'template' => 'register.php',
+            'template' => 'auth/register.php',
             'variables' => [
                 'user' => $user ? $user[0] : null,
                 'message' => $message,
@@ -188,22 +230,23 @@ class UsersController extends BaseController
             return $existingProfilePic;
         }
     }
-    private function updateUser($userId, $values): void
+    private function updateUser($uuId, $userId, $values): void
     {
+        $values['uuId'] = $uuId;
         $values['userId'] = $userId;
         $values['dateupdated'] = date('Y-m-d H:i');
         $updated = $this->userTable->update($values);
 
         // Fetch updated user details and update session
-        $updatedUser = $this->userTable->find('userId', $userId);
+        $updatedUser = $this->userTable->find('uuId', $uuId);
 
-        if (!empty($updatedUser) && $_SESSION['userDetails']['userId'] === $updatedUser[0]['userId']) {
+        if (!empty($updatedUser) && $_SESSION['userDetails']['uuId'] === $uuId) {
             $_SESSION['userDetails'] = $updatedUser[0];
         }
 
-        if (!$updated) {
+        if (!$updated) { // Ensure update was successful before redirecting
             $_SESSION['userUpdateSuccess'] = true;
-            header("Location: /users/view?userId=$userId");
+            header("Location: /users/view?uuId=$uuId"); // Fixed array reference syntax
             exit;
         } else {
             $this->handleError('Failed to update user. Please try again.');
@@ -255,20 +298,20 @@ class UsersController extends BaseController
         }
 
         return [
-            'template' => 'login.php',
+            'template' => 'auth/login.php',
             'title' => 'Login - Eventify',
             'variables' => ['show_message' => $show_message]
         ];
     }
     public function view()
     {
-        if (isset($_GET['userId']) && !empty($_GET['userId'])) {
-            $userId = $_GET['userId'];
-            $user = $this->userTable->find('userId', $userId);
+        if (isset($_GET['uuId']) && !empty($_GET['uuId'])) {
+            $userId = $_GET['uuId'];
+            $user = $this->userTable->find('uuId', $userId);
 
             if ($user && !empty($user)) {
                 return [
-                    'template' => 'profile.php',
+                    'template' => 'client/profile.php',
                     'variables' => [
                         'user' => $user[0],
                     ],
@@ -346,18 +389,18 @@ class UsersController extends BaseController
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-    
+
         // Clear all session variables
         $_SESSION = [];
-    
+
         // Destroy the session
         session_unset();
         session_destroy();
-    
+
         // Expire session cookie
         if (ini_get("session.use_cookies")) {
             setcookie(session_name(), '', time() - 3600, '/');
         }
         $this->redirectToLogin();
-    }    
+    }
 }

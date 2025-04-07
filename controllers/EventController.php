@@ -29,7 +29,7 @@ class EventController extends BaseController
         $users = $this->userTable->find('user_role', 'USER');
 
         return [
-            'template' => 'dashboard.php',
+            'template' => 'admin/dashboard.php',
             'variables' => [
                 'categories' => $categories,
                 'events' => $events,
@@ -57,7 +57,7 @@ class EventController extends BaseController
             $categories = $this->categoryTable->findAll();
 
             return [
-                'template' => 'event-menu.php',
+                'template' => 'client/event-menu.php',
                 'variables' => [
                     'events' => $events,
                     'categories' => $categories,
@@ -185,7 +185,7 @@ class EventController extends BaseController
         $event = $isUpdate ? [$existingEvent] : null;
 
         return [
-            'template' => 'events.php',
+            'template' => 'client/events.php',
             'variables' => [
                 'currentDateTime' => $currentDateTime,
                 'category' => $category,
@@ -233,7 +233,6 @@ class EventController extends BaseController
         header('location: /events/view');
         exit();
     }
-
     public function filter()
     {
 

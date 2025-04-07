@@ -93,7 +93,7 @@
             <p class="form-link">Already have an account? <a href="/users/login">Login here</a></p>
 
             <?php if (isset($user)): ?>
-                <input type="hidden" name="userId" value="<?php echo htmlspecialchars($user['userId']); ?>">
+                <input type="hidden" name="uuId" value="<?php echo htmlspecialchars($user['uuId']); ?>">
             <?php endif; ?>
 
         </form>

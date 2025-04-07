@@ -68,7 +68,7 @@ include '../includes/error-message.php';
             ?>
 
                 <div class="event-actions">
-                    <a href="/users/save?userId=<?php echo $user['userId']; ?>" class="btn btn-edit">Edit Account</a>
+                    <a href="/users/save?uuId=<?php echo $user['uuId']; ?>" class="btn btn-edit">Edit Account</a>
                         <a href="#" class="btn btn-delete"
                             onclick="confirmDelete(event, <?php echo $user['userId']; ?>, 'user')">
                             Delete Account

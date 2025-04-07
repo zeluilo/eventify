@@ -65,7 +65,7 @@ class CategoryController extends BaseController
             }
         }
 
-        return $this->viewResponse('category.php', [
+        return $this->viewResponse('admin/category.php', [
             'category' => $isUpdate ? [$existingCategory] : null,
             'message' => $message
         ], $isUpdate ? 'Edit Category - Eventify' : 'Create Category - Eventify');

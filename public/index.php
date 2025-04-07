@@ -37,16 +37,16 @@ if ($route == '') {
     } else {
         $controller = $controllers[$controllerName];
 
-        // Check if method exists in the controller
-        if (!method_exists($controller, $functionName)) {
+        // Ensure $functionName is a valid string before calling the method
+        if ($functionName && is_string($functionName) && method_exists($controller, $functionName)) {
+            $page = $controller->$functionName();
+        } else {
             http_response_code(404);
             $page = [
                 'template' => '404.php',
                 'title' => 'Page Not Found',
                 'variables' => []
             ];
-        } else {
-            $page = $controller->$functionName();
         }
     }
 }
@@ -55,4 +55,3 @@ if ($route == '') {
 $output = loadTemplate('../pages/' . $page['template'], $page['variables']);
 $title = $page['title'];
 require '../pages/layout.php';
-
